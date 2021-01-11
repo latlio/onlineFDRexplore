@@ -805,9 +805,13 @@ compareUI <- function(id) {
 plotUI <- function(id) {
   ns <- NS(id)
   
-  plotlyOutput(ns("plot")) %>%
-    shinycssloaders::withSpinner(type = 6,
-                                 color = "#0066CC")
+  tagList(
+    plotlyOutput(ns("plot")) %>%
+      shinycssloaders::withSpinner(type = 6,
+                                   color = "#0066CC"),
+    br(),
+    uiOutput(ns("num"))
+  )
 }
 
 set_html_breaks <- function(n) {

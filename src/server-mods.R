@@ -188,7 +188,7 @@ LONDServer <- function(input, output, session, data) {
         LONDres()
       },
       error = function(err){
-        shiny::showNotification(paste0(err), type = "err")
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
       })
     }
   })
@@ -376,6 +376,26 @@ LONDplotServer <- function(input, output, session, LONDresult) {
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
+  })
+  
+  output$num <- renderUI({
+    current_alg_data <- LONDresult$LONDres()
+    
+    div(
+      p(
+        paste0("LOND rejected ", sum(current_alg_data$R), " null hypotheses.")
+      ),
+      p(
+        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+      ),
+      p(
+        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+      ),
+      style = "text-align: center;
+    vertical-align: middle;
+    font-family: Poppins, sans-serif;
+    font-size: 18px"
+    ) #close div
   })
 }
 
@@ -636,7 +656,7 @@ LORDServer <- function(input, output, session, data) {
         LORDres()
       },
       error = function(err){
-        shiny::showNotification(paste0(err), type = "err")
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
       })
     }
   })
@@ -805,7 +825,26 @@ LORDplotServer <- function(input, output, session, LORDresult) {
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
+  })
   
+  output$num <- renderUI({
+    current_alg_data <- LORDresult$LORDres()
+    
+    div(
+      p(
+        paste0("LORD rejected ", sum(current_alg_data$R), " null hypotheses.")
+      ),
+      p(
+        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+      ),
+      p(
+        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+      ),
+      style = "text-align: center;
+    vertical-align: middle;
+    font-family: Poppins, sans-serif;
+    font-size: 18px"
+    ) #close div
   })
 }
 
@@ -1018,13 +1057,6 @@ SAFFRONServer <- function(input, output, session, data) {
     
   })
   
-  # # output no data loaded error message
-  # observeEvent(input$go, {
-  #   if(!is.data.frame(data)) {
-  #     shiny::showNotification("Please upload a dataset first!", type = "err")
-  #   }
-  # })
-  
   # Output error messages
   observeEvent(input$go, {
     if(!is.null(data())){
@@ -1032,7 +1064,7 @@ SAFFRONServer <- function(input, output, session, data) {
         SAFFRONres()
       },
       error = function(err){
-        shiny::showNotification(paste0(err), type = "err")
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
       })
     }
   })
@@ -1201,6 +1233,26 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
+  })
+  
+  output$num <- renderUI({
+    current_alg_data <- SAFFRONresult$SAFFRONres()
+    
+    div(
+      p(
+        paste0("SAFFRON rejected ", sum(current_alg_data$R), " null hypotheses.")
+      ),
+      p(
+        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+      ),
+      p(
+        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+      ),
+      style = "text-align: center;
+    vertical-align: middle;
+    font-family: Poppins, sans-serif;
+    font-size: 18px"
+    ) #close div
   })
 }
 
@@ -1409,13 +1461,6 @@ ADDISServer <- function(input, output, session, data) {
     
   })
   
-  # output no data loaded error message
-  # observeEvent(input$go, {
-  #   if(!is.data.frame(data)) {
-  #     shiny::showNotification("Please upload a dataset first!", type = "err")
-  #   }
-  # })
-  
   # Output error messages
   observeEvent(input$go, {
     if(!is.null(data())){
@@ -1423,7 +1468,7 @@ ADDISServer <- function(input, output, session, data) {
         ADDISres()
       },
       error = function(err){
-        shiny::showNotification(paste0(err), type = "err")
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
       })
     }
   })
@@ -1590,6 +1635,26 @@ ADDISplotServer <- function(input, output, session, ADDISresult) {
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
+  })
+  
+  output$num <- renderUI({
+    current_alg_data <- ADDISresult$ADDISres()
+    
+    div(
+      p(
+        paste0("ADDIS rejected ", sum(current_alg_data$R), " null hypotheses.")
+      ),
+      p(
+        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+      ),
+      p(
+        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+      ),
+      style = "text-align: center;
+    vertical-align: middle;
+    font-family: Poppins, sans-serif;
+    font-size: 18px"
+    ) #close div
   })
 }
 
@@ -1803,10 +1868,10 @@ ADDISaServer <- function(input, output, session, data) {
     
     if(!is.null(data())){
       tryCatch({
-        res()
+        ADDISres()
       },
       error = function(err){
-        shiny::showNotification(paste0(err), type = "err")
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
       })
     }
   })
@@ -1938,7 +2003,7 @@ alphainvestingServer <- function(input, output, session, data) {
         alphainvestingres()
       },
       error = function(err){
-        shiny::showNotification(paste0(err), type = "err")
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
       })
     }
   })
@@ -2084,6 +2149,26 @@ alphainvestingplotServer <- function(input, output, session, alphainvestingresul
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
+  })
+  
+  output$num <- renderUI({
+    current_alg_data <- alphainvestingresult$alphainvestingres()
+    
+    div(
+      p(
+        paste0("Alpha Investing rejected ", sum(current_alg_data$R), " null hypotheses.")
+      ),
+      p(
+        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+      ),
+      p(
+        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+      ),
+      style = "text-align: center;
+    vertical-align: middle;
+    font-family: Poppins, sans-serif;
+    font-size: 18px"
+    ) #close div
   })
 }
 
@@ -2242,7 +2327,7 @@ LONDSTARServer <- function(input, output, session, data) {
         LONDSTARres()
       },
       error = function(err){
-        shiny::showNotification(paste0(err), type = "err")
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
       })
     }
   })
@@ -2410,6 +2495,26 @@ LONDSTARplotServer <- function(input, output, session, LONDSTARresult) {
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
   })
+  
+  output$num <- renderUI({
+    current_alg_data <- LONDSTARresult$LONDSTARres()
+    
+    div(
+      p(
+        paste0("LONDstar rejected ", sum(current_alg_data$R), " null hypotheses.")
+      ),
+      p(
+        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+      ),
+      p(
+        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+      ),
+      style = "text-align: center;
+    vertical-align: middle;
+    font-family: Poppins, sans-serif;
+    font-size: 18px"
+    ) #close div
+  })
 }
 
 LONDSTARcompServer <- function(input, output, session, LONDSTARresult, data) {
@@ -2554,7 +2659,7 @@ LORDSTARServer <- function(input, output, session, data) {
         LORDSTARres()
       },
       error = function(err){
-        shiny::showNotification(paste0(err), type = "err")
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
       })
     }
   })
@@ -2721,6 +2826,26 @@ LORDSTARplotServer <- function(input, output, session, LORDSTARresult) {
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
+  })
+  
+  output$num <- renderUI({
+    current_alg_data <- LORDSTARresult$LORDSTARres()
+    
+    div(
+      p(
+        paste0("LORDstar rejected ", sum(current_alg_data$R), " null hypotheses.")
+      ),
+      p(
+        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+      ),
+      p(
+        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+      ),
+      style = "text-align: center;
+    vertical-align: middle;
+    font-family: Poppins, sans-serif;
+    font-size: 18px"
+    ) #close div
   })
 }
 
@@ -2906,7 +3031,7 @@ SAFFRONSTARServer <- function(input, output, session, data) {
         SAFFRONSTARres()
       },
       error = function(err){
-        shiny::showNotification(paste0(err), type = "err")
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
       })
     }
   })
@@ -3073,6 +3198,26 @@ SAFFRONSTARplotServer <- function(input, output, session, SAFFRONSTARresult) {
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
+  })
+  
+  output$num <- renderUI({
+    current_alg_data <- SAFFRONSTARresult$SAFFRONSTARres()
+    
+    div(
+      p(
+        paste0("SAFFRONstar rejected ", sum(current_alg_data$R), " null hypotheses.")
+      ),
+      p(
+        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+      ),
+      p(
+        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+      ),
+      style = "text-align: center;
+    vertical-align: middle;
+    font-family: Poppins, sans-serif;
+    font-size: 18px"
+    ) #close div
   })
 }
 

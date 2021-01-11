@@ -24,7 +24,7 @@ library(sever) #for waiting screen
 library(knitr)
 library(shinydashboard)
 library(shinydashboardPlus)
-library(shiny.router) #for links
+# library(shiny.router) #for links
 # library(shinyanimate)
 
 # 2. Data Manipulation
@@ -67,6 +67,7 @@ ui <- shiny::fluidPage(
       ####make the navbar pages####
       shiny::navbarPage(HTML(paste0("onlineFDR", tags$sub("explore"))),
                         windowTitle = "onlineFDRExplore",
+                        id = "navmaster",
                         shiny::tabPanel("Get Started",
                                         source("src/file_upload.R")$value),
                         shiny::navbarMenu("Synchronous",

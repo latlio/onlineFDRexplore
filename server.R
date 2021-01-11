@@ -24,7 +24,7 @@ library(sever) #for waiting screen
 library(knitr)
 library(shinydashboard)
 library(shinydashboardPlus)
-library(shiny.router) #for links
+# library(shiny.router) #for links
 # library(shinyanimate)
 
 # 2. Data Manipulation
@@ -73,6 +73,26 @@ server <- function(input, output, session) {
 
     data <- read_csv(input$file$datapath) %>%
       dplyr::mutate(across(any_of("date"), ~as.Date(.x, format = "%m/%d/%y")))
+  })
+  
+  #Dynamically display alg jump button ONLY when file is uploaded
+  output$showjump <- renderUI({
+    if(is.null(in_data())) return()
+    shiny::selectInput("tabjump", "Take me to the following algorithm page", c("Select","LOND", "LORD", "SAFFRON", "ADDIS"))
+  })
+  
+  #from get started to alg pages
+  observeEvent(input$tabjump, {
+    if(input$tabjump == "LOND"){
+      updateTabsetPanel(session, "navmaster", selected = "LOND")
+    } else if (input$tabjump == "LORD") {
+      updateTabsetPanel(session, "navmaster", selected = "LORD")
+    } else if (input$tabjump == "SAFFRON") {
+      updateTabsetPanel(session, "navmaster", selected = "SAFFRON")
+    } else if (input$tabjump == "ADDIS") {
+      updateTabsetPanel(session, "navmaster", selected = "ADDIS")
+    }
+
   })
   
   #warning if wrong file type

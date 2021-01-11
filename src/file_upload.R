@@ -9,12 +9,12 @@ fluidPage(
     h1("User Guide"),
     bsplus::bs_accordion(id = "guide") %>%
       bs_set_opts(panel_type = "primary", use_heading_link = T) %>%
-      bs_append(title = "Introduction", content = HTML("This application is designed to allow users to interactively run procedures that control the False Discovery Rate (FDR) for online hypothesis testing. Source code and additional information for this application are available via <a href=\"https://github.com/dsrobertson/onlineFDR\">GitHub</a>.")) %>%
-      bs_append(title = "FDR vs FWER", content = HTML("FDR is the expected proportion of false rejections out of all rejections. FWER is the probability of making any Type I errors at all. Controlling the FWER is generally more conservative than controlling the FDR. Note that in the case when all null hypotheses are true, the FDR and FWER are the same. For the FWER Explore app, click <a href=\"https://mrc-bsu.shinyapps.io/onlineFWERExplore\">here</a>")) %>%
+      bs_append(title = "Introduction", content = p("This application is designed to allow users to interactively run procedures that control the False Discovery Rate (FDR) for online hypothesis testing. Source code and additional information for this application are available via", a(href = "https://github.com/dsrobertson/onlineFDR", target = "_blank", rel = "noopener noreferrer", "our GitHub"))) %>%
+      bs_append(title = "FDR vs FWER", content = p("FDR is the expected proportion of false rejections out of all rejections. FWER is the probability of making any Type I errors at all. Controlling the FWER is generally more conservative than controlling the FDR. Note that in the case when all null hypotheses are true, the FDR and FWER are the same. For the FWER Explore app, click", a(href = "https://mrc-bsu.shinyapps.io/onlineFWERExplore", target = "_blank", rel = "noopener noreferrer", "here."))) %>%
       bs_append(title = "Application usage", content = p(
         img(src = "user-diagram.png"),
         br(),
-        "For more information, check out the", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html", "Get Started"), "page in our vignette."))  %>%
+        "For more information, check out the", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html", target = "_blank", rel = "noopener noreferrer", "Get Started"), "page in our vignette."))  %>%
       bs_append(title = "Synchronous vs Asynchronous", content = p(
         style="text-align: left",
         "Synchronous algorithms are designed to be used for a sequence of tests in which each test can only start when the previous test has finished.",
@@ -30,7 +30,7 @@ fluidPage(
     ), #close fluidrow
   fluidRow(
     prettyCheckbox("checkbox",
-                   strong("I am a first time user"), 
+                   strong("Click me if you're a first time user"), 
                    value = FALSE,
                    shape = "curve",
                    fill = TRUE,
@@ -47,7 +47,7 @@ fluidPage(
     Pick a sample size that is closest to the size of your data and a proportion of expected non-null
     hypotheses. Text will populate that reports which algorithm will have the highest power given
     your specified parameters. Please then proceed to upload your dataset as a CSV file.",
-        p("For more information, use the", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html#which-function-do-i-use-", "flowchart"), "to help determine which algorithm to use."),
+        p("For more information, use the", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html#which-function-do-i-use-", target = "_blank", rel = "noopener noreferrer", "flowchart"), "to help determine which algorithm to use."),
         br(),
         br(),
         column(4,
@@ -110,11 +110,18 @@ fluidPage(
   fluidRow(
     h1("Upload your dataset"),
     p("Ensure that your CSV file contains at the minimum, a column of p-values with the name 'pval'. If you're including dates, ensure that they are in the format YYYY-MM-DD. "),
-    fileInput("file", NULL,
-              multiple = FALSE,
-              accept = c('text/csv', 
-                         'text/comma-separated-values',
-                         'text/plain',
-                         '.csv'))
+    column(
+      width = 8,
+      fileInput("file", NULL,
+                multiple = FALSE,
+                accept = c('text/csv', 
+                           'text/comma-separated-values',
+                           'text/plain',
+                           '.csv'))
+    ),
+    column(
+      width = 4,
+      uiOutput("showjump")
+      )
   )
 ) #close fluidpage
