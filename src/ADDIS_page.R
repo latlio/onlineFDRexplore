@@ -40,7 +40,7 @@ border-top-color:#ffffff;
                                   summaryUI("ADDIScount")),
                   shiny::tabPanel("Plot",
                                   placeholder2UI("inputADDIS"),
-                                  plotUI("ADDISplot")),
+                                  plot2UI("ADDISplot")),
                   shiny::tabPanel("Compare",
                                   compareUI("ADDIScomp")),
                   shiny::tabPanel("Help", withMathJax(),

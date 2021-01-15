@@ -50,11 +50,19 @@ fluidPage(
         p("For more information, use the", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html#which-function-do-i-use-", target = "_blank", rel = "noopener noreferrer", "flowchart"), "to help determine which algorithm to use."),
         br(),
         br(),
-        column(4,
+        column(3,
                strong("Number of p-values"),
-               shinyWidgets::radioGroupButtons("size", NULL, c(50, 100, 1000))
+               br(),
+               shinyWidgets::prettyRadioButtons("size", NULL, c(50,
+                                                                100,
+                                                                1000),
+                                                icon = icon("check"),
+                                                bigger = TRUE,
+                                                status = "info",
+                                                animation = "jelly")
         ),
-        column(4,
+        column(3,
+               align = "center",
                strong("Proportion of expected non-null hypotheses"),
                shiny::sliderInput("prop", NULL, min = 0.1, max = 1, value = 0.5, step = 0.1),
                shinyBS::bsTooltip("prop",
@@ -62,11 +70,24 @@ fluidPage(
                                   placement = "right",
                                   trigger = "hover")
         ),
-        column(4,
-               align = "right",
+        column(3,
                strong("Number of expected p-values"),
-               shinyWidgets::radioGroupButtons("bound", NULL, c("Known", "Infinite"))
-        )
+               shinyWidgets::prettyRadioButtons("bound", NULL, c("Known", 
+                                                               "Infinite"),
+                                                icon = icon("check"),
+                                                bigger = TRUE,
+                                                status = "info",
+                                                animation = "jelly")
+        ),
+        column(3,
+               strong("Data dependency"),
+               br(),
+               shinyWidgets::prettyRadioButtons("dep", NULL, c("Independent", 
+                                                              "Dependent"),
+                                                icon = icon("check"),
+                                                bigger = TRUE,
+                                                status = "info",
+                                                animation = "jelly"))
       ),
       fluidRow(
         column(width = 12,

@@ -24,7 +24,6 @@ library(sever) #for waiting screen
 library(knitr)
 library(shinydashboard)
 library(shinydashboardPlus)
-# library(shiny.router) #for links
 # library(shinyanimate)
 
 # 2. Data Manipulation
@@ -48,7 +47,7 @@ ui <- shiny::fluidPage(
       waiter::use_waiter(),
       sever::use_sever(),
       waiter::waiter_show_on_load(html = tagList(waiter::spin_fading_circles(),
-                                                 "Initializing onlineFDRExplore")),
+                                                 "Initializing onlineFDRexplore")),
       tags$head(
         tags$script(src = "src/JSModule.js"),
         tags$style(HTML("

@@ -101,7 +101,6 @@ LONDServer <- function(input, output, session, data) {
     
     #check parameters
     alpha = as.numeric(input$alpha)
-    req(input$alpha)
     dep = ifelse(input$dep == "True", T, F)
     random = ifelse(input$random == "True", T, F)
     original = ifelse(input$original == "True", T, F)
@@ -1100,7 +1099,8 @@ SAFFRONServer <- function(input, output, session, data) {
     }
   )
   
-  return(list(SAFFRONres = SAFFRONres))
+  return(list(SAFFRONres = SAFFRONres,
+              alpha = reactive(input$alpha)))
 }
 
 SAFFRONtableServer <- function(input, output, session, SAFFRONresult) {
@@ -1214,7 +1214,9 @@ SAFFRONcountServer <- function(input, output, session, SAFFRONresult) {
 }
 
 SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
-  output$plot <- renderPlotly({
+  ns <- session$ns
+
+  output$plot2 <- renderPlotly({
     #modify data
     new_data <- SAFFRONresult$SAFFRONres() %>%
       mutate(index = row_number(),
@@ -1224,7 +1226,7 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
       pivot_longer(cols = c(SAFFRON, Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
-    
+
     font <- list(
       family = "Lato"
     )
@@ -1234,10 +1236,10 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
   })
-  
-  output$num <- renderUI({
+
+  output$num2 <- renderUI({
     current_alg_data <- SAFFRONresult$SAFFRONres()
-    
+
     div(
       p(
         paste0("SAFFRON rejected ", sum(current_alg_data$R), " null hypotheses.")
@@ -1253,6 +1255,35 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
     font-family: Poppins, sans-serif;
     font-size: 18px"
     ) #close div
+  })
+  
+  observe({
+    if(max(SAFFRONresult$SAFFRONres()$alphai) > SAFFRONresult$alpha()) {
+      output$explain <- renderUI({
+        div(
+          p(
+            "Note that in settings where SAFFRON is rejecting many p-values, the testing levels can go above alpha. For a more technical explanation, click More Info."
+          ),
+          shinyWidgets::actionBttn(ns("showexp"),
+                                   label = "More Info",
+                                   style = "fill",
+                                   color = "primary"),
+          style = "text-align: center;
+    vertical-align: middle;
+    font-family: Poppins, sans-serif;
+    font-size: 12px"
+        )
+      }) #close renderUI
+    } else {
+      div()
+    }
+  }) #close observe
+
+  observeEvent(input$showexp, {
+    showModal(modalDialog(
+      title = "Technical Explanation",
+      img(src = "tech-exp.png")
+    ))
   })
 }
 
@@ -1504,7 +1535,8 @@ ADDISServer <- function(input, output, session, data) {
     }
   )
   
-  return(list(ADDISres = ADDISres))
+  return(list(ADDISres = ADDISres,
+              alpha = reactive(input$alpha)))
 }
 
 ADDIStableServer <- function(input, output, session, ADDISresult) {
@@ -1616,7 +1648,7 @@ ADDIScountServer <- function(input, output, session, ADDISresult) {
 }
 
 ADDISplotServer <- function(input, output, session, ADDISresult) {
-  output$plot <- renderPlotly({
+  output$plot2 <- renderPlotly({
     #modify data
     new_data <- ADDISresult$ADDISres() %>%
       mutate(index = row_number(),
@@ -1637,7 +1669,7 @@ ADDISplotServer <- function(input, output, session, ADDISresult) {
       layout(xaxis = ex, yaxis = why)
   })
   
-  output$num <- renderUI({
+  output$num2 <- renderUI({
     current_alg_data <- ADDISresult$ADDISres()
     
     div(
@@ -1655,6 +1687,35 @@ ADDISplotServer <- function(input, output, session, ADDISresult) {
     font-family: Poppins, sans-serif;
     font-size: 18px"
     ) #close div
+  })
+  
+  observe({
+    if(max(ADDISresult$ADDISres()$alphai) > ADDISresult$alpha()) {
+      output$explain <- renderUI({
+        div(
+          p(
+            "Note that in settings where ADDIS is rejecting many p-values, the testing levels can go above alpha. For a more technical explanation, click More Info."
+          ),
+          shinyWidgets::actionBttn(ns("showexp"),
+                                   label = "More Info",
+                                   style = "fill",
+                                   color = "primary"),
+          style = "text-align: center;
+    vertical-align: middle;
+    font-family: Poppins, sans-serif;
+    font-size: 12px"
+        )
+      }) #close renderUI
+    } else {
+      div()
+    }
+  }) #close observe
+  
+  observeEvent(input$showexp, {
+    showModal(modalDialog(
+      title = "Technical Explanation",
+      img(src = "tech-exp.png")
+    ))
   })
 }
 

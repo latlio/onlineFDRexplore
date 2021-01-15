@@ -24,7 +24,6 @@ library(sever) #for waiting screen
 library(knitr)
 library(shinydashboard)
 library(shinydashboardPlus)
-# library(shiny.router) #for links
 # library(shinyanimate)
 
 # 2. Data Manipulation
@@ -178,11 +177,13 @@ server <- function(input, output, session) {
   filter_data <- reactive({
     size = as.numeric(input$size)
     boundstat = ifelse(input$bound == "Known", 1, 0)
+    depstat = ifelse(input$dep == "Independent", 0, 1)
     out <- demodata %>%
       filter(n == size,
              bound == boundstat,
-             pi.vec == input$prop) %>%
-      select(-c(pi.vec, n, bound)) %>%
+             pi.vec == input$prop,
+             dep == depstat) %>%
+      select(-c(pi.vec, n, bound, dep)) %>%
       arrange(desc(power))
   })
   
@@ -199,8 +200,8 @@ server <- function(input, output, session) {
   # })
   
   output$addiswarn <- renderText({
-    if(input$size == 100 & input$prop == 0.4 | 
-       input$size == 1000 & input$prop < 0.5 & input$prop > 0.2) {
+    if(input$size == 100 & input$prop == 0.4 & input$dep == "Independent"| 
+       input$size == 1000 & input$prop < 0.5 & input$prop > 0.2 &input$dep == "Independent") {
       paste("Using ADDIS on a dataset > 100,000 may be too slow. Using onlineFDR::ADDIS() is recommended. ")
     }
   })

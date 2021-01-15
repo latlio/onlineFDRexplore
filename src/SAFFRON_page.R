@@ -39,7 +39,7 @@ border-top-color:#ffffff;
                                   summaryUI("SAFFRONcount")),
                   shiny::tabPanel("Plot",
                                   placeholder2UI("inputSAFFRON"),
-                                  plotUI("SAFFRONplot")),
+                                  plot2UI("SAFFRONplot")),
                   shiny::tabPanel("Compare",
                                   compareUI("SAFFRONcomp")),
                   shiny::tabPanel("Code", withMathJax(),

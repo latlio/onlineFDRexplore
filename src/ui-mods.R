@@ -814,6 +814,21 @@ plotUI <- function(id) {
   )
 }
 
+#for saffron and addis
+plot2UI <- function(id) {
+  ns <- NS(id)
+  
+  tagList(
+    plotlyOutput(ns("plot2")) %>%
+      shinycssloaders::withSpinner(type = 6,
+                                   color = "#0066CC"),
+    br(),
+    uiOutput(ns("num2")),
+    br(),
+    uiOutput(ns("explain"))
+  )
+}
+
 set_html_breaks <- function(n) {
   HTML(strrep(br(), n))
 }
