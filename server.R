@@ -59,7 +59,7 @@ server <- function(input, output, session) {
   #Load in data
   in_data <- reactive({
     req(input$file)
-
+    
     ext <- tools::file_ext(input$file$name)
     shiny::validate(need(ext %in% c(
       'text/csv',
@@ -69,7 +69,7 @@ server <- function(input, output, session) {
       'csv',
       'tsv'), 
       "Please upload a csv file!"))
-
+    
     data <- read_csv(input$file$datapath) %>%
       dplyr::mutate(across(any_of("date"), ~as.Date(.x, format = "%m/%d/%y")))
   })
@@ -91,7 +91,7 @@ server <- function(input, output, session) {
     } else if (input$tabjump == "ADDIS") {
       updateTabsetPanel(session, "navmaster", selected = "ADDIS")
     }
-
+    
   })
   
   #warning if wrong file type
@@ -108,14 +108,14 @@ server <- function(input, output, session) {
                               duration = NULL)
     }
   })
-
+  
   #### LOND ####
   
   LOND_result <- callModule(LONDServer, id = "inputLOND", data = in_data)
   callModule(LONDcountServer, "LONDcount", LOND_result)
   callModule(LONDplotServer, "LONDplot", LOND_result)
   callModule(LONDcompServer, "LONDcomp", LOND_result, data = in_data)
-
+  
   #### LORD ####
   
   LORD_result <- callModule(LORDServer, id = "inputLORD", data = in_data)
@@ -170,10 +170,11 @@ server <- function(input, output, session) {
   callModule(SAFFRONSTARcompServer, "SAFFRONSTARcomp", SAFFRONSTAR_result, data = in_data)
   
   #### get started page ####
+  # power demo
   observe({
     toggle(id = "novice", condition = input$checkbox)
   })
-
+  
   filter_data <- reactive({
     size = as.numeric(input$size)
     boundstat = ifelse(input$bound == "Known", 1, 0)
@@ -188,9 +189,9 @@ server <- function(input, output, session) {
   })
   
   output$demores <- renderText({
-  paste(filter_data() %>%
-          head(1) %>%
-          pull(procedure), "has the highest power.")
+    paste(filter_data() %>%
+            head(1) %>%
+            pull(procedure), "has the highest power.")
   })
   
   # output$saffronwarn <- renderText({
@@ -204,5 +205,10 @@ server <- function(input, output, session) {
        input$size == 1000 & input$prop < 0.5 & input$prop > 0.2 &input$dep == "Independent") {
       paste("Using ADDIS on a dataset > 100,000 may be too slow. Using onlineFDR::ADDIS() is recommended. ")
     }
+  })
+  
+  # data format
+  output$formatres <- renderUI({
+    
   })
 }

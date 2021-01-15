@@ -9,12 +9,12 @@ shiny::fluidRow(
   
   #### put input area here ####
   shiny::column(4,
-         
-         box(
-           title = strong("LOND"),
-           status = "primary",
-           solidHeader = TRUE,
-           tags$style(HTML("
+                
+                box(
+                  title = strong("LOND"),
+                  status = "primary",
+                  solidHeader = TRUE,
+                  tags$style(HTML("
 .box.box-solid.box-primary>.box-header {
   color:#ffffff;
   background:#266EAB
@@ -27,9 +27,9 @@ border-right-color:#F7F7F7;
 border-top-color:#ffffff;
 }
                                     ")),
-           width = 12,
-           LONDUI("inputLOND")
-         )
+                  width = 12,
+                  LONDUI("inputLOND")
+                )
   ), ## close column 1
   
   #### put output here ####

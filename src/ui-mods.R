@@ -162,8 +162,8 @@ LONDUI <- function(id) {
                                       onLabel = "True",
                                       offLabel = "False",
                                       width = "80px")),
-        ) #close div
-      ),
+      ) #close div
+    ),
     shinyWidgets::actionBttn(
       inputId = ns("go"),
       label = "Calculate", 
@@ -778,7 +778,7 @@ summaryUI <- function(id) {
 
 compareUI <- function(id) {
   ns <- NS(id)
-
+  
   tagList(
     br(),
     p("Make sure you already clicked Calculate. Clicking the 'Compare' button compares the results of two algorithms. Parameters for the selected algorithm are assumed to be same as those for the current algorithm, otherwise they are set to the default values (see Help)."),

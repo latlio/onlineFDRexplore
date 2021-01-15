@@ -152,10 +152,10 @@ LONDServer <- function(input, output, session, data) {
       filter(param != "go",
              param != "download2_bttn")
   })
-
+  
   # remove placeholder text
   observeEvent(input$go, {
-
+    
     if(input$go == 0){
       shinyjs::show(id = "placeholder")
       shinyjs::show(id = "placeholder2")
@@ -169,7 +169,7 @@ LONDServer <- function(input, output, session, data) {
     }
     
   })
-
+  
   # output no data loaded error message
   # observeEvent(input$go, {
   #   ifelse(!is.null(datacheck), signal <- 1, signal <- 0)
@@ -178,10 +178,10 @@ LONDServer <- function(input, output, session, data) {
   #     shiny::showNotification("Please upload a dataset first!", type = "err")
   #   }
   # })
-
+  
   # Output error messages
   observeEvent(input$go, {
-
+    
     if(!is.null(data())){
       tryCatch({
         LONDres()
@@ -191,7 +191,7 @@ LONDServer <- function(input, output, session, data) {
       })
     }
   })
-
+  
   #download handler
   # global <- reactiveValues(response = FALSE)
   # 
@@ -215,13 +215,13 @@ LONDServer <- function(input, output, session, data) {
   
   #download params
   output$download2 <- downloadHandler(
-      filename = function() {
-        paste("LONDparams-", Sys.Date(), ".csv", sep = "")
-      },
-      content = function(file) {
-        write_csv(user_params(), file)
-      }
-    )
+    filename = function() {
+      paste("LONDparams-", Sys.Date(), ".csv", sep = "")
+    },
+    content = function(file) {
+      write_csv(user_params(), file)
+    }
+  )
   
   return(list(LONDres = LONDres))
 }
@@ -246,7 +246,7 @@ LONDtableServer <- function(input, output, session, LONDresult) {
                               style = function(value) {
                                 ifelse(data$R[which(data$pval == value)] == 1, color <- "#008000", color <- "#e00000")
                                 list(color = color)
-                                }),
+                              }),
                 alphai = colDef(header = with_tooltip("Alpha",
                                                       "LOND significance threshold"),
                                 filterable = FALSE),
@@ -275,9 +275,9 @@ LONDcountServer <- function(input, output, session, LONDresult) {
     toggle(id = "downloadbutton")
     # shinyanimate::startAnim(session, "downloadbutton", "fadeInDown")
   })
-
+  
   output$count <- renderUI({
-
+    
     data <- LONDresult$LONDres()
     if(sum(data$R) == 1) {
       div(
@@ -319,7 +319,7 @@ LONDcountServer <- function(input, output, session, LONDresult) {
       )
     }
   })
-
+  
   output$download <- downloadHandler(
     filename = function() {
       paste("LOND-", Sys.Date(), ".zip", sep = "")
@@ -409,7 +409,7 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
            SAFFRON = SAFFRON(data),
            ADDIS = ADDIS(data))
   }
-
+  
   data_to_plot <- eventReactive(input$compare, {
     current_alg_data <- LONDresult$LONDres()
     
@@ -444,7 +444,7 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
         layout(xaxis = ex, yaxis = why)
     }
   })
-
+  
   #to make compnum reactive
   select_alg_data <- eventReactive(input$compare, {
     out <- select_alg(alg = input$alg, data = data())
@@ -478,7 +478,7 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
     font-size: 18px"
       ) #close div
     }
-    })
+  })
 }
 
 LORDServer <- function(input, output, session, data) {
@@ -525,7 +525,7 @@ LORDServer <- function(input, output, session, data) {
   
   # Run LORD algorithm
   LORDres <- eventReactive(input$go, {
- 
+    
     # if(is.null(data())){
     #   shiny::showNotification("Please upload a dataset", type = "err")
     # }
@@ -659,7 +659,7 @@ LORDServer <- function(input, output, session, data) {
       })
     }
   })
- 
+  
   #provide download functionality
   # global <- reactiveValues(response = FALSE)
   # 
@@ -1215,7 +1215,7 @@ SAFFRONcountServer <- function(input, output, session, SAFFRONresult) {
 
 SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
   ns <- session$ns
-
+  
   output$plot2 <- renderPlotly({
     #modify data
     new_data <- SAFFRONresult$SAFFRONres() %>%
@@ -1226,7 +1226,7 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
       pivot_longer(cols = c(SAFFRON, Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
-
+    
     font <- list(
       family = "Lato"
     )
@@ -1236,10 +1236,10 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
   })
-
+  
   output$num2 <- renderUI({
     current_alg_data <- SAFFRONresult$SAFFRONres()
-
+    
     div(
       p(
         paste0("SAFFRON rejected ", sum(current_alg_data$R), " null hypotheses.")
@@ -1278,7 +1278,7 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
       div()
     }
   }) #close observe
-
+  
   observeEvent(input$showexp, {
     showModal(modalDialog(
       title = "Technical Explanation",
@@ -2346,8 +2346,8 @@ LONDSTARServer <- function(input, output, session, data) {
       shiny::showModal(modalDialog("Running algorithm..."))
     }
     output <- LONDstar(d = data(),
-                         alpha = alpha,
-                         version = version)
+                       alpha = alpha,
+                       version = version)
     shiny::removeModal()
     
     output

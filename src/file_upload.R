@@ -10,24 +10,21 @@ fluidPage(
     bsplus::bs_accordion(id = "guide") %>%
       bs_set_opts(panel_type = "primary", use_heading_link = T) %>%
       bs_append(title = "Introduction", content = p("This application is designed to allow users to interactively run procedures that control the False Discovery Rate (FDR) for online hypothesis testing. Source code and additional information for this application are available via", a(href = "https://github.com/dsrobertson/onlineFDR", target = "_blank", rel = "noopener noreferrer", "our GitHub"))) %>%
-      bs_append(title = "FDR vs FWER", content = p("FDR is the expected proportion of false rejections out of all rejections. FWER is the probability of making any Type I errors at all. Controlling the FWER is generally more conservative than controlling the FDR. Note that in the case when all null hypotheses are true, the FDR and FWER are the same. For the FWER Explore app, click", a(href = "https://mrc-bsu.shinyapps.io/onlineFWERExplore", target = "_blank", rel = "noopener noreferrer", "here."))) %>%
-      bs_append(title = "Application usage", content = p(
-        img(src = "user-diagram.png"),
+      bs_append(title = "FDR vs. FWER", content = p("FDR is the expected proportion of false rejections out of all rejections. FWER is the probability of making any Type I errors at all. Controlling the FWER is generally more conservative than controlling the FDR. Note that in the case when all null hypotheses are true, the FDR and FWER are the same. For the FWER Explore app, click", a(href = "https://mrc-bsu.shinyapps.io/onlineFWERExplore", target = "_blank", rel = "noopener noreferrer", "here."))) %>%
+      bs_append(title = "Which algorithm do I use?", content = p(
+        "In general, there are two 'flavors' your data could come in: fully sequential and batch. This app provides algorithms that control the FDR for both flavors. For guidance on understanding which 'flavor', check out our ", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html#which-function-do-i-use-", target = "_blank", rel = "noopener noreferrer", "flowchart."), 
         br(),
-        "For more information, check out the", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html", target = "_blank", rel = "noopener noreferrer", "Get Started"), "page in our vignette."))  %>%
-      bs_append(title = "Synchronous vs Asynchronous", content = p(
-        style="text-align: left",
-        "Synchronous algorithms are designed to be used for a sequence of tests in which each test can only start when the previous test has finished.",
         br(),
-        "Asynchronous algorithms are designed to be used when tests overlap in time. The asynchronous setting may be more realistic since tests are often performed to overlap to gain time efficiency and because of difficulties of coordination in a large-scale, decentralized setting.",
-        img(src = "sync-diagram.png")
-      )) %>%
+        "This app also provides a helper tool that indicates which algorithm is more powerful across different parameters based on simulated data and a helper tool that indicates how your data should be formatted.", 
+        br(),
+        br(),
+        "For more information about the algorithms themselves, check out the ", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html", target = "_blank", rel = "noopener noreferrer", "Get Started"), "page in our vignette."))  %>%
       bs_append(title = "Help & feedback", content = HTML("For additional help or to submit feedback or bug reports,
        please contact: <br>
        David Robertson <br>
        MRC Biostatistics Unit <br>
        <a href=\"mailto:david.robertson@mrc-bsu.cam.ac.uk@gmail.com\">Email</a>"))
-    ), #close fluidrow
+  ), #close fluidrow
   fluidRow(
     prettyCheckbox("checkbox",
                    strong("Click me if you're a first time user"), 
@@ -42,12 +39,10 @@ fluidPage(
     div(
       id = "novice",
       fluidRow(
-        h1("Which synchronous algorithm do I use?"),
-        "Use the following demo to inform which algorithm is most appropriate to use.
-    Pick a sample size that is closest to the size of your data and a proportion of expected non-null
-    hypotheses. Text will populate that reports which algorithm will have the highest power given
-    your specified parameters. Please then proceed to upload your dataset as a CSV file.",
-        p("For more information, use the", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html#which-function-do-i-use-", target = "_blank", rel = "noopener noreferrer", "flowchart"), "to help determine which algorithm to use."),
+        h1("Which fully sequential algorithm do I use?"),
+        p("The following tool is designed to help inform which algorithm is most appropriate to use and is based on simulated data in ideal conditions. Please note that in your real-world data, you never know the number of non-null hypotheses, and thus, this tool is meant to be exploratory rather than definitive. Given your specified parameters, this tool will report which algorithm has the highest power given."),
+        br(),
+        p("For more information, please use the", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html#which-function-do-i-use-", target = "_blank", rel = "noopener noreferrer", "flowchart"), "to help determine which algorithm to use."),
         br(),
         br(),
         column(3,
@@ -73,7 +68,7 @@ fluidPage(
         column(3,
                strong("Number of expected p-values"),
                shinyWidgets::prettyRadioButtons("bound", NULL, c("Known", 
-                                                               "Infinite"),
+                                                                 "Infinite"),
                                                 icon = icon("check"),
                                                 bigger = TRUE,
                                                 status = "info",
@@ -83,7 +78,7 @@ fluidPage(
                strong("Data dependency"),
                br(),
                shinyWidgets::prettyRadioButtons("dep", NULL, c("Independent", 
-                                                              "Dependent"),
+                                                               "Dependent"),
                                                 icon = icon("check"),
                                                 bigger = TRUE,
                                                 status = "info",
@@ -97,16 +92,16 @@ fluidPage(
                  closable = FALSE, 
                  width = NULL,
                  status = "primary", 
-               solidHeader = FALSE, 
-               background = "aqua",
-               collapsible = TRUE,
-               enable_dropdown = TRUE,
-               dropdown_icon = "wrench",
-               dropdown_menu = dropdownItemList(
-                 dropdownItem(url = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html", name = "More information"),
-                 dropdownItem(url = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html#which-function-do-i-use-", name = "User Flowchart"),
-               ),
-               p(textOutput("demores"))
+                 solidHeader = FALSE, 
+                 background = "aqua",
+                 collapsible = TRUE,
+                 enable_dropdown = TRUE,
+                 dropdown_icon = "wrench",
+                 dropdown_menu = dropdownItemList(
+                   dropdownItem(url = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html", name = "More information"),
+                   dropdownItem(url = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html#which-function-do-i-use-", name = "User Flowchart"),
+                 ),
+                 p(textOutput("demores"))
                )
         )
       ),
@@ -123,8 +118,23 @@ fluidPage(
       tags$head(tags$style("#addiswarn{font-size: 14px;
                          font-family: Arial;
                          text-align: center;
-                         color: red"))
-      
+                         color: red")),
+      fluidRow(
+        h1("How should I format my data?"),
+        p("Now that you've familiarized yourself with the different algorithms, depending on the 'flavor', there are two main data formats to consider to make full use of this app. Select a 'flavor' to see how you should format your data."),
+        column(3,
+               strong("Choose a data format"),
+               br(),
+               shinyWidgets::prettyRadioButtons("format", NULL, c("Fully sequential",
+                                                                  "Batch"),
+                                                icon = icon("check"),
+                                                bigger = TRUE,
+                                                status = "info",
+                                                animation = "jelly")
+        ),
+        column(9,
+               uiOutput("formatres"))
+      ) #close fluidrow
     ) #close div
   ), #close hidden
   br(),
@@ -143,6 +153,6 @@ fluidPage(
     column(
       width = 4,
       uiOutput("showjump")
-      )
+    )
   )
 ) #close fluidpage
