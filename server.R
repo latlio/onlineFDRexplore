@@ -209,6 +209,16 @@ server <- function(input, output, session) {
   
   # data format
   output$formatres <- renderUI({
-    
+    if(input$format == "Fully sequential") {
+      div(
+        img(src = "formatexp1.png"),
+        p("The id column can be a number, a string, or an alphanumeric sequence. The date column is optional, but if you choose to provide a date, please ensure that it is in YYYY-MM-DD, so that the app can correctly parse it. You may have to change the cell format to text if using something like Excel.")
+      )
+    } else {
+      div(
+        img(src = "formatexp2.png"),
+        p("The id column can be a number, a string, or an alphanumeric sequence. Please ensure that the batches are numbered starting from 1.")
+      )
+    }
   })
 }
