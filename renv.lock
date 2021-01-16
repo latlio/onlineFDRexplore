@@ -714,6 +714,18 @@
       "Repository": "CRAN",
       "Hash": "ee4ed72d7a5047d9e73cf922ad66e9c9"
     },
+    "shiny.router": {
+      "Package": "shiny.router",
+      "Version": "0.2.0",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "shiny.router",
+      "RemoteUsername": "Appsilon",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "16816b25c21aeaeb7126ab83f75458a9abfe49d2",
+      "Hash": "a2f083bfb9bc4bd4456de68f2c799b80"
+    },
     "shinyBS": {
       "Package": "shinyBS",
       "Version": "0.61",
