@@ -799,7 +799,11 @@ LONDcountServer <- function(input, output, session, LONDresult) {
     if(sum(data$R) == 1) {
       div(
         set_html_breaks(10),
-        paste0("1 null hypothesis was rejected. See full results by downloading below"),
+        renderTextillate({
+          textillate(paste0("1 null hypothesis was rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
@@ -807,16 +811,16 @@ LONDcountServer <- function(input, output, session, LONDresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        ),
-        style = "text-align: center;
-    vertical-align: middle;
-    font-family: Poppins, sans-serif;
-    font-size: 18px"
+        )
       )
     } else {
       div(
         set_html_breaks(10),
-        paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below"),
+        renderTextillate({
+          textillate(paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
@@ -824,15 +828,7 @@ LONDcountServer <- function(input, output, session, LONDresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        ),
-        style = "text-align: center;
-        vertical-align: middle;
-        font-family: Poppins, sans-serif;
-        font-size: 18px;
-        .shiny-download-link{
-        width: 250px;
-        }
-        "
+        )
       )
     }
   })
@@ -868,7 +864,11 @@ LORDcountServer <- function(input, output, session, LORDresult) {
     if(sum(data$R) == 1) {
       div(
         set_html_breaks(10),
-        paste0("1 null hypothesis was rejected. See full results by downloading below"),
+        renderTextillate({
+          textillate(paste0("1 null hypothesis was rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
@@ -876,16 +876,16 @@ LORDcountServer <- function(input, output, session, LORDresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        ),
-        style = "text-align: center;
-    vertical-align: middle;
-    font-family: Poppins, sans-serif;
-    font-size: 18px"
+        )
       )
     } else {
       div(
         set_html_breaks(10),
-        paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below"),
+        renderTextillate({
+          textillate(paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
@@ -893,15 +893,7 @@ LORDcountServer <- function(input, output, session, LORDresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        ),
-        style = "text-align: center;
-        vertical-align: middle;
-        font-family: Poppins, sans-serif;
-        font-size: 18px;
-        .shiny-download-link{
-        width: 250px;
-        }
-        "
+        )
       )
     }
   })
@@ -937,7 +929,11 @@ SAFFRONcountServer <- function(input, output, session, SAFFRONresult) {
     if(sum(data$R) == 1) {
       div(
         set_html_breaks(10),
-        paste0("1 null hypothesis was rejected. See full results by downloading below"),
+        renderTextillate({
+          textillate(paste0("1 null hypothesis was rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
@@ -945,16 +941,16 @@ SAFFRONcountServer <- function(input, output, session, SAFFRONresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        ),
-        style = "text-align: center;
-    vertical-align: middle;
-    font-family: Poppins, sans-serif;
-    font-size: 18px"
+        )
       )
     } else {
       div(
         set_html_breaks(10),
-        paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below"),
+        renderTextillate({
+          textillate(paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
@@ -962,15 +958,7 @@ SAFFRONcountServer <- function(input, output, session, SAFFRONresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        ),
-        style = "text-align: center;
-        vertical-align: middle;
-        font-family: Poppins, sans-serif;
-        font-size: 18px;
-        .shiny-download-link{
-        width: 250px;
-        }
-        "
+        )
       )
     }
   })
@@ -1006,7 +994,11 @@ ADDIScountServer <- function(input, output, session, ADDISresult) {
     if(sum(data$R) == 1) {
       div(
         set_html_breaks(10),
-        paste0("1 null hypothesis was rejected. See full results by downloading below"),
+        renderTextillate({
+          textillate(paste0("1 null hypothesis was rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
@@ -1014,16 +1006,16 @@ ADDIScountServer <- function(input, output, session, ADDISresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        ),
-        style = "text-align: center;
-    vertical-align: middle;
-    font-family: Poppins, sans-serif;
-    font-size: 18px"
+        )
       )
     } else {
       div(
         set_html_breaks(10),
-        paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below"),
+        renderTextillate({
+          textillate(paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
@@ -1031,15 +1023,7 @@ ADDIScountServer <- function(input, output, session, ADDISresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        ),
-        style = "text-align: center;
-        vertical-align: middle;
-        font-family: Poppins, sans-serif;
-        font-size: 18px;
-        .shiny-download-link{
-        width: 250px;
-        }
-        "
+        )
       )
     }
   })
@@ -1075,7 +1059,11 @@ alphainvestingcountServer <- function(input, output, session, alphainvestingresu
     if(sum(data$R) == 1) {
       div(
         set_html_breaks(10),
-        paste0("1 null hypothesis was rejected. See full results by downloading below"),
+        renderTextillate({
+          textillate(paste0("1 null hypothesis was rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
@@ -1083,16 +1071,16 @@ alphainvestingcountServer <- function(input, output, session, alphainvestingresu
           style = "fill",
           color = "primary",
           size = "sm"
-        ),
-        style = "text-align: center;
-    vertical-align: middle;
-    font-family: Poppins, sans-serif;
-    font-size: 18px"
+        )
       )
     } else {
       div(
         set_html_breaks(10),
-        paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below"),
+        renderTextillate({
+          textillate(paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
@@ -1100,15 +1088,7 @@ alphainvestingcountServer <- function(input, output, session, alphainvestingresu
           style = "fill",
           color = "primary",
           size = "sm"
-        ),
-        style = "text-align: center;
-        vertical-align: middle;
-        font-family: Poppins, sans-serif;
-        font-size: 18px;
-        .shiny-download-link{
-        width: 250px;
-        }
-        "
+        )
       )
     }
   })

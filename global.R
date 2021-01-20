@@ -22,6 +22,7 @@ library(shinyFeedback) #for user feedback messages
 # library(tippy) #for hovers
 # library(highcharter) #for animated plots
 library(DT)
+library(textillate)
 library(plotly)
 library(waiter) #for loading screen
 library(sever) #for waiting screen
