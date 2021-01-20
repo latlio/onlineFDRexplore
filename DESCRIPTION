@@ -1,0 +1,35 @@
+Package: onlineFDRShiny
+Title: App for online error control
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Lathan",
+           family = "Liou",
+           role = c("aut", "cre"),
+           email = "lathan.liou@mrc-bsu.cam.ac.uk")
+Description: This Shiny app implements the onlineFDR package.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: shiny,
+	shinyWidgets,
+	shinycssloaders,
+	shinyjs,
+	shinyBS,
+	bsplus,
+	shinyFeedback,
+	plotly,
+	waiter,
+	sever,
+	knitr,
+	rmarkdown,
+	markdown,
+	shinydashboard,
+	shinydashboardPlus,
+	shinythemes,
+	tidyverse,
+	lubridate,
+	onlineFDR
+
+	

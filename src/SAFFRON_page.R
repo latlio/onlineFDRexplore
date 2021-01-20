@@ -13,19 +13,7 @@ shiny::fluidRow(
                   title = strong("SAFFRON"),
                   status = "primary",
                   solidHeader = TRUE,
-                  tags$style(HTML("
-.box.box-solid.box-primary>.box-header {
-  color:#ffffff;
-  background:#266EAB
-                    }
-
-.box.box-solid.box-primary{
-border-bottom-color#ffffff;
-border-left-color:#F7F7F7;
-border-right-color:#F7F7F7;
-border-top-color:#ffffff;
-}
-                                    ")),
+                  tags$link(rel = "stylesheet", type = "text/css", href = "www/css/styles.css"),
                   width = 12,
                   SAFFRONUI("inputSAFFRON")
                 )
@@ -35,6 +23,7 @@ border-top-color:#ffffff;
   shiny::column(8,
                 shiny::tabsetPanel(
                   shiny::tabPanel("Summary",
+                                  shinybusy::add_busy_bar(color = "#266EAB"),
                                   placeholderUI("inputSAFFRON"),
                                   summaryUI("SAFFRONcount")),
                   shiny::tabPanel("Plot",

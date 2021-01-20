@@ -6,6 +6,7 @@
 ################################################################################
 fluidPage(
   fluidRow(
+    #### USER GUIDE ####
     h1("User Guide"),
     bsplus::bs_accordion(id = "guide") %>%
       bs_set_opts(panel_type = "primary", use_heading_link = T) %>%
@@ -26,6 +27,7 @@ fluidPage(
        <a href=\"mailto:david.robertson@mrc-bsu.cam.ac.uk@gmail.com\">Email</a>"))
   ), #close fluidrow
   fluidRow(
+    #### CHECKBOX FIRST TIME USER ####
     prettyCheckbox("checkbox",
                    strong("Click me if you're a first time user"), 
                    value = FALSE,
@@ -109,11 +111,6 @@ fluidPage(
                          font-family: Arial;
                          text-align: center;")),
       br(),
-      # textOutput("saffronwarn"),
-      # tags$head(tags$style("#saffronwarn{font-size: 14px;
-      #                    font-family: Arial;
-      #                    text-align: center;
-      #                    color: red")),
       textOutput("addiswarn"),
       tags$head(tags$style("#addiswarn{font-size: 14px;
                          font-family: Arial;
@@ -139,6 +136,7 @@ fluidPage(
   ), #close hidden
   br(),
   fluidRow(
+    #### UPLOAD DATA ####
     h1("Upload your dataset"),
     p("Ensure that your CSV file contains at the minimum, a column of p-values with the name 'pval'. If you're including dates, ensure that they are in the format YYYY-MM-DD. "),
     column(

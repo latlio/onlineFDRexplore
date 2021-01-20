@@ -5,40 +5,9 @@
 # Created: Fri Sep 18 09:57:20 2020 ------------------------------
 ################################################################################
 source("src/server-mods.R")
-# source("src/router.R")
-
-# 1. Shiny ----
-library(shiny)
-library(shinyWidgets) #custom widgets, allows for shinydashboard elements
-library(shinycssloaders) #custom loading icons
-library(shinyjs) #improved user exp
-library(shinyBS) #custom widgets
-library(bsplus)
-# library(shinyalert) 
-library(shinyFeedback) #for user feedback messages
-# library(tippy) #for hovers
-# library(highcharter) #for animated plots
-library(plotly)
-library(waiter) #for loading screen
-library(sever) #for waiting screen
-library(knitr)
-library(shinydashboard)
-library(shinydashboardPlus)
-# library(shinyanimate)
-
-# 2. Data Manipulation
-library(tidyverse)
-library(dplyr)
-library(lubridate)
-# library(reactable)
-
-#make sure github dev version is installed
-# devtools::install_github("https://github.com/dsrobertson/onlineFDR")
-# library(StanHeaders)
-library(onlineFDR)
 
 #for alg recommendation feature
-demodata <- read_csv("powerFDRdata.csv") %>%
+demodata <- read_csv("data/powerFDRdata.csv") %>%
   mutate(pi.vec = round(pi.vec, 2))
 
 #for hover functionality
@@ -53,8 +22,6 @@ server <- function(input, output, session) {
   sever()
   Sys.sleep(0.5)
   waiter_hide()
-  
-  # router$server(input, output, session)
   
   #Load in data
   in_data <- reactive({
@@ -80,7 +47,7 @@ server <- function(input, output, session) {
     shiny::selectInput("tabjump", "Take me to the following algorithm page", c("Select","LOND", "LORD", "SAFFRON", "ADDIS"))
   })
   
-  #from get started to alg pages
+  #jump to user-clicked algorithm
   observeEvent(input$tabjump, {
     if(input$tabjump == "LOND"){
       updateTabsetPanel(session, "navmaster", selected = "LOND")
@@ -94,7 +61,7 @@ server <- function(input, output, session) {
     
   })
   
-  #warning if wrong file type
+  #output warning if wrong file type
   observeEvent(input$file, {
     ext <- tools::file_ext(input$file$name)
     if (ext %!in% c(
@@ -144,31 +111,7 @@ server <- function(input, output, session) {
   callModule(alphainvestingcountServer, "alphainvestcount", alphainvesting_result)
   callModule(alphainvestingplotServer, "alphainvestplot", alphainvesting_result)
   callModule(alphainvestingcompServer, "alphainvestcomp", alphainvesting_result, data = in_data)
-  
-  #### ADDIS Async ####
-  ADDISa_result <- callModule(ADDISServer, id = "inputADDISa", data = in_data)
-  callModule(ADDIScountServer, "ADDISacount", ADDIS_result)
-  callModule(ADDISplotServer, "ADDISaplot", ADDIS_result)
-  callModule(ADDIScompServer, "ADDISacomp", ADDIS_result, data = in_data)
-  
-  #### LONDstar ####
-  LONDSTAR_result <- callModule(LONDSTARServer, id = "inputLONDSTAR", data = in_data)
-  callModule(LONDSTARcountServer, "LONDSTARcount", LONDSTAR_result)
-  callModule(LONDSTARplotServer, "LONDSTARplot", LONDSTAR_result)
-  callModule(LONDSTARcompServer, "LONDSTARcomp", LONDSTAR_result, data = in_data)
-  
-  #### LORDstar ####
-  LORDSTAR_result <- callModule(LORDSTARServer, id = "inputLORDSTAR", data = in_data)
-  callModule(LORDSTARcountServer, "LORDSTARcount", LORDSTAR_result)
-  callModule(LORDSTARplotServer, "LORDSTARplot", LORDSTAR_result)
-  callModule(LORDSTARcompServer, "LORDSTARcomp", LORDSTAR_result, data = in_data)
-  
-  #### SAFFRONstar ####
-  SAFFRONSTAR_result <- callModule(SAFFRONSTARServer, id = "inputSAFFRONSTAR", data = in_data)
-  callModule(SAFFRONSTARcountServer, "SAFFRONSTARcount", SAFFRONSTAR_result)
-  callModule(SAFFRONSTARplotServer, "SAFFRONSTARplot", SAFFRONSTAR_result)
-  callModule(SAFFRONSTARcompServer, "SAFFRONSTARcomp", SAFFRONSTAR_result, data = in_data)
-  
+
   #### get started page ####
   # power demo
   observe({
@@ -194,12 +137,6 @@ server <- function(input, output, session) {
             pull(procedure), "has the highest power.")
   })
   
-  # output$saffronwarn <- renderText({
-  #   if(input$size == 1000 & input$prop > 0.5) {
-  #     paste("Using SAFFRON may overestimate the FDR.")
-  #   }
-  # })
-  
   output$addiswarn <- renderText({
     if(input$size == 100 & input$prop == 0.4 & input$dep == "Independent"| 
        input$size == 1000 & input$prop < 0.5 & input$prop > 0.2 &input$dep == "Independent") {
@@ -211,12 +148,26 @@ server <- function(input, output, session) {
   output$formatres <- renderUI({
     if(input$format == "Fully sequential") {
       div(
-        img(src = "formatexp1.png"),
+        renderDT(tibble(id = c(1, "A", "1A"),
+                        date = c("2014-12-01", "2014-12-01", "2014-12-3"),
+                        pval = c(0.0674, 0.0532, 0.0127)),
+                 options = list(info = F,
+                                lengthChange = F,
+                                ordering = F,
+                                paging = F,
+                                searching = F)),
         p("The id column can be a number, a string, or an alphanumeric sequence. The date column is optional, but if you choose to provide a date, please ensure that it is in YYYY-MM-DD, so that the app can correctly parse it. You may have to change the cell format to text if using something like Excel.")
       )
     } else {
       div(
-        img(src = "formatexp2.png"),
+        renderDT(tibble(id = c(1, "A", "1A"),
+                        pval = c(0.0674, 0.0532, 0.0127),
+                        batch = c(1,1,2)),
+                 options = list(info = F,
+                                lengthChange = F,
+                                ordering = F,
+                                paging = F,
+                                searching = F)),
         p("The id column can be a number, a string, or an alphanumeric sequence. Please ensure that the batches are numbered starting from 1.")
       )
     }

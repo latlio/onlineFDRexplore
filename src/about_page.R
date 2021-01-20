@@ -6,8 +6,6 @@
 ################################################################################
 fluidPage(
   fluidRow(
-    
-    #### put input area here ####
     column(12,
            widgetUserBox(
              title = "Lathan Liou",
@@ -72,8 +70,6 @@ fluidPage(
         "shinydashboard",
         br(),
         "shinydashboardPlus",
-        br(),
-        "tippy",
         br(),
         "waiter",
         br(),

@@ -8,7 +8,7 @@
 #set memory limit
 options(shiny.maxRequestSize = 500*1024^2)
 
-#clear before deplyment
+#clear before deployment
 rm(list = ls())
 
 # 1. Shiny ----
@@ -18,13 +18,14 @@ library(shinycssloaders) #custom loading icons
 library(shinyjs) #improved user exp
 library(shinyBS) #custom widgets
 library(bsplus)
-# library(shinyalert) 
 library(shinyFeedback) #for user feedback messages
 # library(tippy) #for hovers
 # library(highcharter) #for animated plots
+library(DT)
 library(plotly)
 library(waiter) #for loading screen
 library(sever) #for waiting screen
+library(shinybusy) #for progress bar
 library(knitr)
 library(rmarkdown)
 library(markdown)
@@ -35,18 +36,11 @@ library(shinythemes)
 
 # 2. Data Manipulation
 library(tidyverse)
-library(dplyr)
 library(lubridate)
-# library(reactable)
 
 #make sure github dev version is installed
 # devtools::install_github("https://github.com/dsrobertson/onlineFDR")
-# library(StanHeaders)
 library(onlineFDR)
 
 source("ui.R")
 source("server.R")
-
-# enableBookmarking(store = "server")
-
-# runApp(shinyApp(ui, server), launch.browser = TRUE)
