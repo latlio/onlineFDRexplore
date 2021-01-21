@@ -4,7 +4,9 @@
 # Author: Lathan Liou
 # Created: Fri Sep 18 09:57:20 2020 ------------------------------
 ################################################################################
+library(DT)
 source("src/server-mods.R")
+source("src/cicerone_guide.R")
 
 #for alg recommendation feature
 demodata <- read_csv("data/powerFDRdata.csv") %>%
@@ -22,6 +24,72 @@ server <- function(input, output, session) {
   sever()
   Sys.sleep(0.5)
   waiter_hide()
+  
+  #### get started page ####
+  
+  #initialize walkthrough
+  Sys.sleep(1.5)
+  guide$init()$start()
+  
+  # power demo
+  observe({
+    toggle(id = "novice", condition = input$checkbox)
+  })
+  
+  filter_data <- reactive({
+    size = as.numeric(input$size)
+    boundstat = ifelse(input$bound == "Known", 1, 0)
+    depstat = ifelse(input$dep == "Independent", 0, 1)
+    out <- demodata %>%
+      filter(n == size,
+             bound == boundstat,
+             pi.vec == input$prop,
+             dep == depstat) %>%
+      select(-c(pi.vec, n, bound, dep)) %>%
+      arrange(desc(power))
+  })
+  
+  output$demores <- renderText({
+    paste(filter_data() %>%
+            head(1) %>%
+            pull(procedure), "has the highest power.")
+  })
+  
+  output$addiswarn <- renderText({
+    if(input$size == 100 & input$prop == 0.4 & input$dep == "Independent"| 
+       input$size == 1000 & input$prop < 0.5 & input$prop > 0.2 &input$dep == "Independent") {
+      paste("Using ADDIS on a dataset > 100,000 may be too slow. Using onlineFDR::ADDIS() is recommended. ")
+    }
+  })
+  
+  # data format
+  output$formatres <- renderUI({
+    if(input$format == "Fully sequential") {
+      div(
+        DT::renderDT(tibble(id = c(1, "A", "1A"),
+                        date = c("2014-12-01", "2014-12-01", "2014-12-3"),
+                        pval = c(0.0674, 0.0532, 0.0127)),
+                 options = list(info = F,
+                                lengthChange = F,
+                                ordering = F,
+                                paging = F,
+                                searching = F)),
+        p("The id column can be a number, a string, or an alphanumeric sequence. The date column is optional, but if you choose to provide a date, please ensure that it is in YYYY-MM-DD, so that the app can correctly parse it. You may have to change the cell format to text if using something like Excel.")
+      )
+    } else {
+      div(
+       DT::renderDT(tibble(id = c(1, "A", "1A"),
+                        pval = c(0.0674, 0.0532, 0.0127),
+                        batch = c(1,1,2)),
+                 options = list(info = F,
+                                lengthChange = F,
+                                ordering = F,
+                                paging = F,
+                                searching = F)),
+        p("The id column can be a number, a string, or an alphanumeric sequence. Please ensure that the batches are numbered starting from 1.")
+      )
+    }
+  })
   
   #Load in data
   in_data <- reactive({
@@ -112,64 +180,4 @@ server <- function(input, output, session) {
   callModule(alphainvestingplotServer, "alphainvestplot", alphainvesting_result)
   callModule(alphainvestingcompServer, "alphainvestcomp", alphainvesting_result, data = in_data)
 
-  #### get started page ####
-  # power demo
-  observe({
-    toggle(id = "novice", condition = input$checkbox)
-  })
-  
-  filter_data <- reactive({
-    size = as.numeric(input$size)
-    boundstat = ifelse(input$bound == "Known", 1, 0)
-    depstat = ifelse(input$dep == "Independent", 0, 1)
-    out <- demodata %>%
-      filter(n == size,
-             bound == boundstat,
-             pi.vec == input$prop,
-             dep == depstat) %>%
-      select(-c(pi.vec, n, bound, dep)) %>%
-      arrange(desc(power))
-  })
-  
-  output$demores <- renderText({
-    paste(filter_data() %>%
-            head(1) %>%
-            pull(procedure), "has the highest power.")
-  })
-  
-  output$addiswarn <- renderText({
-    if(input$size == 100 & input$prop == 0.4 & input$dep == "Independent"| 
-       input$size == 1000 & input$prop < 0.5 & input$prop > 0.2 &input$dep == "Independent") {
-      paste("Using ADDIS on a dataset > 100,000 may be too slow. Using onlineFDR::ADDIS() is recommended. ")
-    }
-  })
-  
-  # data format
-  output$formatres <- renderUI({
-    if(input$format == "Fully sequential") {
-      div(
-        renderDT(tibble(id = c(1, "A", "1A"),
-                        date = c("2014-12-01", "2014-12-01", "2014-12-3"),
-                        pval = c(0.0674, 0.0532, 0.0127)),
-                 options = list(info = F,
-                                lengthChange = F,
-                                ordering = F,
-                                paging = F,
-                                searching = F)),
-        p("The id column can be a number, a string, or an alphanumeric sequence. The date column is optional, but if you choose to provide a date, please ensure that it is in YYYY-MM-DD, so that the app can correctly parse it. You may have to change the cell format to text if using something like Excel.")
-      )
-    } else {
-      div(
-        renderDT(tibble(id = c(1, "A", "1A"),
-                        pval = c(0.0674, 0.0532, 0.0127),
-                        batch = c(1,1,2)),
-                 options = list(info = F,
-                                lengthChange = F,
-                                ordering = F,
-                                paging = F,
-                                searching = F)),
-        p("The id column can be a number, a string, or an alphanumeric sequence. Please ensure that the batches are numbered starting from 1.")
-      )
-    }
-  })
 }

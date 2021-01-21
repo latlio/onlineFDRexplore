@@ -39,72 +39,6 @@ callModule(SAFFRONSTARcompServer, "SAFFRONSTARcomp", SAFFRONSTAR_result, data = 
 #   })
 # }
 
-#### FUNCTION FACTORY ####
-make_count_server_function <- function(algorithm_result, file_string) {
-  force(file_string)
-  count_server_function <- function(input, output, session) {
-    ns <- session$ns
-    #toggle download button
-    observe({
-      toggle(id = "downloadbutton")
-    })
-    
-    output$count <- renderUI({  
-      
-      data <- algorithm_result[[1]]
-      if(sum(data$R) == 1) {
-        div(
-          set_html_breaks(10),
-          paste0("1 null hypothesis was rejected. See full results by downloading below"),
-          set_html_breaks(2),
-          shinyWidgets::downloadBttn(
-            outputId = ns("download"),
-            label = "Download results",
-            style = "fill",
-            color = "primary",
-            size = "sm"
-          ),
-          style = "text-align: center;
-    vertical-align: middle;
-    font-family: Poppins, sans-serif;
-    font-size: 18px"
-        )
-      } else {
-        div(
-          set_html_breaks(10),
-          paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below"),
-          set_html_breaks(2),
-          shinyWidgets::downloadBttn(
-            outputId = ns("download"),
-            label = "Download results",
-            style = "fill",
-            color = "primary",
-            size = "sm"
-          ),
-          style = "text-align: center;
-        vertical-align: middle;
-        font-family: Poppins, sans-serif;
-        font-size: 18px;
-        .shiny-download-link{
-        width: 250px;
-        }
-        "
-        )
-      }
-    })
-    
-    output$download <- downloadHandler(
-      filename = function() {
-        paste(file_string, Sys.Date(), ".csv", sep = "")
-      },
-      content = function(file) {
-        write_csv(algorithm_result[[1]], file)
-      }
-    )
-  }
-  return(count_server_function)
-}
-
 LONDtableServer <- function(input, output, session, LONDresult) {
   output$table <- renderReactable({
     data <- LONDresult$LONDres()
@@ -1793,4 +1727,5 @@ SAFFRONSTARUI <- function(id) {
       )
     )
   }
+}
   

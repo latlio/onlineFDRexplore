@@ -5,9 +5,9 @@ account: mrc-bsu
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3366755
-bundleId: 4103102
+bundleId: 4123740
 url: https://mrc-bsu.shinyapps.io/onlineFDRExplore/
-when: 1610764559.31477
+when: 1611189486.34569
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .Rprofile
+ignoredFiles: .Rprofile|DESCRIPTION

@@ -33,6 +33,7 @@ library(markdown)
 library(shinydashboard)
 library(shinydashboardPlus)
 library(shinythemes)
+library(cicerone) #interactive walkthrough
 # library(shinyanimate)
 
 # 2. Data Manipulation

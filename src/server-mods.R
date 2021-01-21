@@ -811,7 +811,11 @@ LONDcountServer <- function(input, output, session, LONDresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        )
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
       )
     } else {
       div(
@@ -828,7 +832,11 @@ LONDcountServer <- function(input, output, session, LONDresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        )
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
       )
     }
   })
@@ -876,7 +884,11 @@ LORDcountServer <- function(input, output, session, LORDresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        )
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
       )
     } else {
       div(
@@ -893,7 +905,11 @@ LORDcountServer <- function(input, output, session, LORDresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        )
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
       )
     }
   })
@@ -941,7 +957,11 @@ SAFFRONcountServer <- function(input, output, session, SAFFRONresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        )
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
       )
     } else {
       div(
@@ -958,7 +978,11 @@ SAFFRONcountServer <- function(input, output, session, SAFFRONresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        )
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
       )
     }
   })
@@ -1006,7 +1030,11 @@ ADDIScountServer <- function(input, output, session, ADDISresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        )
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
       )
     } else {
       div(
@@ -1023,7 +1051,11 @@ ADDIScountServer <- function(input, output, session, ADDISresult) {
           style = "fill",
           color = "primary",
           size = "sm"
-        )
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
       )
     }
   })
@@ -1071,7 +1103,11 @@ alphainvestingcountServer <- function(input, output, session, alphainvestingresu
           style = "fill",
           color = "primary",
           size = "sm"
-        )
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
       )
     } else {
       div(
@@ -1088,7 +1124,11 @@ alphainvestingcountServer <- function(input, output, session, alphainvestingresu
           style = "fill",
           color = "primary",
           size = "sm"
-        )
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
       )
     }
   })
@@ -1156,17 +1196,29 @@ LONDplotServer <- function(input, output, session, LONDresult) {
     
     div(
       p(
-        paste0("LOND rejected ", sum(current_alg_data$R), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("LOND rejected ", sum(current_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       p(
-        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+          })
       ),
       p(
-        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 18px"
     ) #close div
   })
@@ -1198,17 +1250,29 @@ LORDplotServer <- function(input, output, session, LORDresult) {
     
     div(
       p(
-        paste0("LORD rejected ", sum(current_alg_data$R), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("LORD rejected ", sum(current_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       p(
-        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       p(
-        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 18px"
     ) #close div
   })
@@ -1242,17 +1306,29 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
     
     div(
       p(
-        paste0("SAFFRON rejected ", sum(current_alg_data$R), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("SAFFRON rejected ", sum(current_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       p(
-        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       p(
-        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 18px"
     ) #close div
   })
@@ -1313,17 +1389,29 @@ ADDISplotServer <- function(input, output, session, ADDISresult) {
     
     div(
       p(
-        paste0("ADDIS rejected ", sum(current_alg_data$R), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("ADDIS rejected ", sum(current_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       p(
-        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       p(
-        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 18px"
     ) #close div
   })
@@ -1384,23 +1472,35 @@ alphainvestingplotServer <- function(input, output, session, alphainvestingresul
     
     div(
       p(
-        paste0("Alpha Investing rejected ", sum(current_alg_data$R), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("Alpha Investing rejected ", sum(current_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       p(
-        paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       p(
-        paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+        renderTextillate({
+          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        })
       ),
       style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 18px"
     ) #close div
   })
 }
 
-#### COMPARE SERVERS
+#### COMPARE SERVERS ####
 LONDcompServer <- function(input, output, session, LONDresult, data) {
   select_alg <- function(alg, data) {
     switch(alg,
@@ -1464,20 +1564,36 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
       
       div(
         p(
-          paste0("LOND rejected ", sum(current_alg_data$R), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("LOND rejected ", sum(current_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0(selected_alg_to_display(), " rejected ", sum(select_alg_data$R), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0(selected_alg_to_display(), " rejected ", sum(select_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 18px"
       ) #close div
     }
@@ -1547,20 +1663,36 @@ LORDcompServer <- function(input, output, session, LORDresult, data) {
       
       div(
         p(
-          paste0("LORD rejected ", sum(current_alg_data$R), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("LORD rejected ", sum(current_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0(selected_alg_to_display(), " rejected ", sum(select_alg_data$R), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0(selected_alg_to_display(), " rejected ", sum(select_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 18px"
       ) #close div
     }
@@ -1630,20 +1762,36 @@ SAFFRONcompServer <- function(input, output, session, SAFFRONresult, data) {
       
       div(
         p(
-          paste0("SAFFRON rejected ", sum(current_alg_data$R), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("SAFFRON rejected ", sum(current_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0(selected_alg_to_display(), " rejected ", sum(select_alg_data$R), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0(selected_alg_to_display(), " rejected ", sum(select_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 18px"
       ) #close div
     }
@@ -1713,20 +1861,36 @@ ADDIScompServer <- function(input, output, session, ADDISresult, data) {
       
       div(
         p(
-          paste0("ADDIS rejected ", sum(current_alg_data$R), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("ADDIS rejected ", sum(current_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0(selected_alg_to_display(), " rejected ", sum(select_alg_data$R), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0(selected_alg_to_display(), " rejected ", sum(select_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 18px"
       ) #close div
     }
@@ -1796,20 +1960,36 @@ alphainvestingcompServer <- function(input, output, session, alphainvestingresul
       
       div(
         p(
-          paste0("Alpha Investing rejected ", sum(current_alg_data$R), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("Alpha Investing rejected ", sum(current_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0(selected_alg_to_display(), " rejected ", sum(select_alg_data$R), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0(selected_alg_to_display(), " rejected ", sum(select_alg_data$R), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         p(
-          paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses.")
+          renderTextillate({
+            textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+              textillateIn(effect = "fadeInDown",
+                           sync = T)
+          })
         ),
         style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 18px"
       ) #close div
     }

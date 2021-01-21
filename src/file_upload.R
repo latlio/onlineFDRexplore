@@ -137,7 +137,7 @@ fluidPage(
   br(),
   fluidRow(
     #### UPLOAD DATA ####
-    h1("Upload your dataset"),
+    h1("Upload your dataset", id = "upload"),
     p("Ensure that your CSV file contains at the minimum, a column of p-values with the name 'pval'. If you're including dates, ensure that they are in the format YYYY-MM-DD. "),
     column(
       width = 8,

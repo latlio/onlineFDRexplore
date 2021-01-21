@@ -4,6 +4,8 @@
 # Author: Lathan Liou
 # Created: Fri Sep 18 09:50:19 2020 ------------------------------
 ################################################################################
+library(DT)
+
 source("src/ui-mods.R")
 
 ui <- shiny::fluidPage(
@@ -16,7 +18,8 @@ ui <- shiny::fluidPage(
     waiter::use_waiter(),
     sever::use_sever(),
     waiter::waiter_show_on_load(html = tagList(waiter::spin_fading_circles(),
-                                               "Initializing onlineFDRexplore")),
+                                               "Initializing onlineFDRexplore",)),
+    cicerone::use_cicerone(),
     tags$head(
       tags$script(src = "src/JSModule.js"),
       tags$link(rel = "stylesheet", type = "text/css", href = "css/lato.css"),
