@@ -1,7 +1,7 @@
 guide <- Cicerone$
   new()$
   step(
-    "guide",
+    "guidetitle",
     "User Guide",
     "Please read the user guide in its entirety if you're a new user!"
   )$
