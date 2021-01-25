@@ -4,7 +4,6 @@
 # Author: Lathan Liou
 # Created: Fri Sep 18 09:50:19 2020 ------------------------------
 ################################################################################
-library(DT)
 
 source("src/ui-mods.R")
 
@@ -51,6 +50,14 @@ ui <- shiny::fluidPage(
                                                    ".shiny-output-error { visibility: hidden; }",
                                                    ".shiny-output-error:before { visibility: hidden; }")
                       ),# close navbarMenu
+                      # shiny::navbarMenu("Batch algorithms",
+                      #                   shiny::tabPanel("BatchPRDS", source("src/BatchPRDS_page.R")$value),
+                      #                   shiny::tabPanel("BatchBH",
+                      #                                   source("src/BatchBH_page.R")$value),
+                      #                   shiny::tabPanel("BatchStBH", source("src/BatchStBH_page.R")$value),
+                      #                   tags$style(type="text/css",
+                      #                              ".shiny-output-error { visibility: hidden; }",
+                      #                              ".shiny-output-error:before { visibility: hidden; }")), #close navbarMenu
                       shiny::tabPanel("About",
                                       source("src/about_page.R")$value)
     ) ##close navbarpage

@@ -14,9 +14,7 @@ LONDServer <- function(input, output, session, data) {
   ns <- session$ns
   
   # Run LOND algorithm
-  LONDres <- eventReactive(input$go, {
-    # validate(need(is.null(data()), "Please upload a dataset"))
-    
+  LONDres <- reactive({
     #check parameters
     alpha = as.numeric(input$alpha)
     dep = ifelse(input$dep == "True", T, F)
@@ -52,9 +50,14 @@ LONDServer <- function(input, output, session, data) {
                 original = original)
     shiny::removeModal()
     
-    return(out)
-  }) #close eventReactive
-  
+    out
+  }) %>% bindCache(input$alpha, 
+                   input$dep,
+                   input$random,
+                   input$original,
+                   input$seed) %>%
+    bindEvent(input$go)
+
   #toggle advanced options
   observe({
     toggle(id = "advopt", condition = input$checkbox)
@@ -120,7 +123,7 @@ LONDServer <- function(input, output, session, data) {
     }
   )
   
-  return(list(LONDres = LONDres))
+  list(LONDres = LONDres)
 }
 LORDServer <- function(input, output, session, data) {
   ns <- session$ns
@@ -165,22 +168,13 @@ LORDServer <- function(input, output, session, data) {
   })
   
   # Run LORD algorithm
-  LORDres <- eventReactive(input$go, {
-    
-    # if(is.null(data())){
-    #   shiny::showNotification("Please upload a dataset", type = "err")
-    # }
-    
+  LORDres <- reactive({
     #check parameters
     alpha = as.numeric(input$alpha)
-    req(input$alpha)
     version = as.character(input$version)
     w0 = as.numeric(input$w0)
-    req(input$w0)
     b0 = as.numeric(input$b0)
-    req(input$b0)
     tau.discard = as.numeric(input$tau.discard)
-    req(input$tau.discard)
     random = ifelse(input$random == "True", T, F)
     
     #provide user feedback
@@ -259,7 +253,14 @@ LORDServer <- function(input, output, session, data) {
     shiny::removeModal()
     
     output
-  })
+  }) %>%
+    bindCache(input$alpha, 
+              input$version, 
+              input$w0, 
+              input$b0, 
+              input$tau.discard,
+              input$random) %>%
+    bindEvent(input$go)
   
   observe({
     toggle(id = "advopt", condition = input$checkbox)
@@ -325,31 +326,27 @@ LORDServer <- function(input, output, session, data) {
   #download params
   output$download2 <- downloadHandler(
     filename = function() {
-      paste("LONDparams-", Sys.Date(), ".csv", sep = "")
+      paste("LORDparams-", Sys.Date(), ".csv", sep = "")
     },
     content = function(file) {
       write_csv(user_params(), file)
     }
   )
   
-  return(list(LORDres = LORDres))
+  list(LORDres = LORDres)
 }
 SAFFRONServer <- function(input, output, session, data) {
   ns <- session$ns
   
-  SAFFRONres <- eventReactive(input$go, {
+  SAFFRONres <- reactive({
     
     #check parameters
     alpha = as.numeric(input$alpha)
-    req(input$alpha)
     w0 = as.numeric(input$w0)
-    req(input$w0)
     lambda = as.numeric(input$lambda)
-    req(input$lambda)
     random = ifelse(input$random == "True", T, F)
     discard = ifelse(input$discard == "True", T, F)
     tau.discard = as.numeric(input$tau.discard)
-    req(input$tau.discard)
     
     #provide user feedback
     observeEvent(input$alpha, {
@@ -425,7 +422,14 @@ SAFFRONServer <- function(input, output, session, data) {
     shiny::removeModal()
     
     output
-  })
+  }) %>%
+    bindCache(input$alpha,
+              input$w0,
+              input$lambda,
+              input$random,
+              input$discard,
+              input$tau.discard) %>%
+    bindEvent(input$go)
   
   observe({
     toggle(id = "advopt", condition = input$checkbox)
@@ -502,23 +506,19 @@ SAFFRONServer <- function(input, output, session, data) {
     }
   )
   
-  return(list(SAFFRONres = SAFFRONres,
-              alpha = reactive(input$alpha)))
+  list(SAFFRONres = SAFFRONres,
+              alpha = reactive(input$alpha))
 }
 ADDISServer <- function(input, output, session, data) {
   ns <- session$ns
   
-  ADDISres <- eventReactive(input$go, {
+  ADDISres <- reactive({
     
     #check parameters
     alpha = as.numeric(input$alpha)
-    req(input$alpha)
     w0 = as.numeric(input$w0)
-    req(input$w0)
     lambda = as.numeric(input$lambda)
-    req(input$lambda)
     tau = as.numeric(input$tau)
-    req(input$tau)
     
     observeEvent(input$alpha, {
       req(input$alpha)
@@ -592,7 +592,12 @@ ADDISServer <- function(input, output, session, data) {
     shiny::removeModal()
     
     output
-  })
+  }) %>%
+    bindCache(input$alpha,
+              input$w0,
+              input$lambda,
+              input$tau) %>%
+    bindEvent(input$go)
   
   observe({
     toggle(id = "advopt", condition = input$checkbox)
@@ -669,19 +674,18 @@ ADDISServer <- function(input, output, session, data) {
     }
   )
   
-  return(list(ADDISres = ADDISres,
-              alpha = reactive(input$alpha)))
+  list(ADDISres = ADDISres,
+              alpha = reactive(input$alpha))
 }
+
 alphainvestingServer <- function(input, output, session, data) {
   ns <- session$ns
   
-  alphainvestingres <- eventReactive(input$go, {
+  alphainvestingres <- reactive({
     
     #check parameters
     alpha = as.numeric(input$alpha)
-    req(input$alpha)
     w0 = as.numeric(input$w0)
-    req(input$w0)
     random = ifelse(input$random == "True", T, F)
     
     observeEvent(input$alpha, {
@@ -725,7 +729,11 @@ alphainvestingServer <- function(input, output, session, data) {
     shiny::removeModal()
     
     output
-  })
+  }) %>%
+    bindCache(input$alpha,
+              input$w0,
+              input$random) %>%
+    bindEvent(input$go)
   
   observe({
     toggle(id = "advopt", condition = input$checkbox)
@@ -781,7 +789,7 @@ alphainvestingServer <- function(input, output, session, data) {
     }
   )
   
-  return(list(alphainvestingres = alphainvestingres))
+  list(alphainvestingres = alphainvestingres)
 }
 
 #### COUNT SERVERS ####
@@ -1189,7 +1197,9 @@ LONDplotServer <- function(input, output, session, LONDresult) {
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
-  })
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(LONDresult$LONDres() %>% slice_tail())
   
   output$num <- renderUI({
     current_alg_data <- LONDresult$LONDres()
@@ -1243,7 +1253,9 @@ LORDplotServer <- function(input, output, session, LORDresult) {
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
-  })
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(LORDresult$LORDres() %>% slice_tail())
   
   output$num <- renderUI({
     current_alg_data <- LORDresult$LORDres()
@@ -1299,7 +1311,9 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
-  })
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(SAFFRONresult$SAFFRONres() %>% slice_tail())
   
   output$num2 <- renderUI({
     current_alg_data <- SAFFRONresult$SAFFRONres()
@@ -1382,7 +1396,9 @@ ADDISplotServer <- function(input, output, session, ADDISresult) {
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
-  })
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(ADDISresult$ADDISres() %>% slice_tail())
   
   output$num2 <- renderUI({
     current_alg_data <- ADDISresult$ADDISres()
@@ -1465,7 +1481,9 @@ alphainvestingplotServer <- function(input, output, session, alphainvestingresul
     plot_ly(new_data, x = ~index, y = ~alpha, color = ~adjustment) %>%
       add_lines() %>%
       layout(xaxis = ex, yaxis = why)
-  })
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(alphainvestingresult$alphainvestingres() %>% slice_tail())
   
   output$num <- renderUI({
     current_alg_data <- alphainvestingresult$alphainvestingres()
@@ -1546,7 +1564,8 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
         add_lines() %>%
         layout(xaxis = ex, yaxis = why)
     }
-  })
+  }) %>%
+    bindCache(data_to_plot() %>% slice_tail())
   
   #to make compnum reactive
   select_alg_data <- eventReactive(input$compare, {
@@ -1645,7 +1664,8 @@ LORDcompServer <- function(input, output, session, LORDresult, data) {
         add_lines() %>%
         layout(xaxis = ex, yaxis = why)
     }
-  })
+  })  %>%
+    bindCache(data_to_plot() %>% slice_tail())
   
   #to make compnum reactive
   select_alg_data <- eventReactive(input$compare, {
@@ -1744,7 +1764,8 @@ SAFFRONcompServer <- function(input, output, session, SAFFRONresult, data) {
         add_lines() %>%
         layout(xaxis = ex, yaxis = why)
     }
-  })
+  }) %>%
+    bindCache(data_to_plot() %>% slice_tail())
   
   #to make compnum reactive
   select_alg_data <- eventReactive(input$compare, {
@@ -1843,7 +1864,8 @@ ADDIScompServer <- function(input, output, session, ADDISresult, data) {
         add_lines() %>%
         layout(xaxis = ex, yaxis = why)
     }
-  })
+  }) %>%
+    bindCache(data_to_plot() %>% slice_tail())
   
   #to make compnum reactive
   select_alg_data <- eventReactive(input$compare, {
@@ -1942,7 +1964,8 @@ alphainvestingcompServer <- function(input, output, session, alphainvestingresul
         add_lines() %>%
         layout(xaxis = ex, yaxis = why)
     }
-  })
+  }) %>%
+    bindCache(data_to_plot() %>% slice_tail())
   
   #to make compnum reactive
   select_alg_data <- eventReactive(input$compare, {

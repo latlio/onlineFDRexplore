@@ -4,7 +4,7 @@
 # Author: Lathan Liou
 # Created: Fri Sep 18 09:57:20 2020 ------------------------------
 ################################################################################
-library(DT)
+
 source("src/server-mods.R")
 source("src/cicerone_guide.R")
 
@@ -90,7 +90,7 @@ server <- function(input, output, session) {
       )
     }
   })
-  
+
   #Load in data
   in_data <- reactive({
     req(input$file)

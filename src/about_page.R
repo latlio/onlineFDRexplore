@@ -12,12 +12,11 @@ fluidPage(
              subtitle = "Research Assistant @ MRC BSU",
              type = NULL,
              width = 12,
-             src = "https://www.mrc-bsu.cam.ac.uk/wp-content/uploads/2020/10/1q-cropped.png",
              background = TRUE,
              backgroundUrl = "https://images.pexels.com/photos/531880/pexels-photo-531880.jpeg?auto=compress&cs=tinysrgb&h=350",
              closable = FALSE,
              "Designed the onlineFDR app",
-             footer = p("Feel free to email any questions or comments to", a("Lathan", href= "mailto:lathan.liou@mrc-bsu.cam.ac.uk/"))
+             footer = p("Feel free to email any questions or comments to", a("Lathan", href= "mailto:lathanliu21@gmail.com/"))
            )
     )# close column
   ), #close fluidrow

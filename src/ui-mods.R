@@ -448,6 +448,39 @@ alphainvestingUI <- function(id) {
   )
 }
 
+BatchUI <- function(id) {
+  ns <- NS(id)
+  
+  tagList(
+    useShinyFeedback(),
+    useShinyjs(),
+    div(style = "display: inline-block;vertical-align:top; width: 200px;",
+        strong("Alpha:"),
+        shiny::textInput(ns("alpha"), 
+                         NULL,
+                         width = 80, value = 0.05, placeholder = ".05")),
+    shinyBS::bsTooltip(ns("alpha"), 
+                       "Overall significance level of the FDR procedure",
+                       placement = "right",
+                       trigger = "hover"),
+    shinyWidgets::actionBttn(
+      inputId = ns("go"),
+      label = "Calculate", 
+      style = "fill",
+      color = "success"
+    ),
+    br(),
+    br(),
+    shinyWidgets::downloadBttn(
+      outputId = ns("download2"),
+      label = "Download inputs",
+      style = "fill",
+      color = "primary",
+      size = "sm"
+    )
+  )
+}
+
 #### OTHER UI ####
 tableUI <- function(id) {
   ns <- NS(id)
