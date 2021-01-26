@@ -191,15 +191,17 @@ server <- function(input, output, session) {
   BatchPRDS_result <- callModule(BatchPRDSServer, id = "inputBatchPRDS", data = in_data)
   callModule(BatchPRDScountServer, "BatchPRDScount", BatchPRDS_result)
   callModule(BatchPRDSplotServer, "BatchPRDSplot", BatchPRDS_result)
+  callModule(BatchPRDScompServer, "BatchPRDScomp", BatchPRDS_result, data = in_data)
 
   #### Batch BH ####
   BatchBH_result <- callModule(BatchBHServer, id = "inputBatchBH", data = in_data)
   callModule(BatchBHcountServer, "BatchBHcount", BatchBH_result)
   callModule(BatchBHplotServer, "BatchBHplot", BatchBH_result)
+  callModule(BatchBHcompServer, "BatchBHcomp", BatchBH_result, data = in_data)
   
   #### Batch StBH ####
   BatchStBH_result <- callModule(BatchStBHServer, id = "inputBatchStBH", data = in_data)
   callModule(BatchStBHcountServer, "BatchStBHcount", BatchStBH_result)
   callModule(BatchStBHplotServer, "BatchStBHplot", BatchStBH_result)
-  
+  callModule(BatchStBHcompServer, "BatchStBHcomp", BatchStBH_result, data = in_data)
 }

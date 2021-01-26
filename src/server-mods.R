@@ -1440,7 +1440,7 @@ BatchPRDScountServer <- function(input, output, session, BatchPRDSresult) {
     data <- BatchPRDSresult$BatchPRDSres()
     if(sum(data$R) == 1) {
       div(
-        set_html_breaks(10),
+        set_html_breaks(3),
         renderTextillate({
           textillate(paste0("1 null hypothesis was rejected. See full results by downloading below."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
@@ -1461,7 +1461,7 @@ BatchPRDScountServer <- function(input, output, session, BatchPRDSresult) {
       )
     } else {
       div(
-        set_html_breaks(10),
+        set_html_breaks(3),
         renderTextillate({
           textillate(paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
@@ -1514,7 +1514,7 @@ BatchBHcountServer <- function(input, output, session, BatchBHresult) {
     data <- BatchBHresult$BatchBHres()
     if(sum(data$R) == 1) {
       div(
-        set_html_breaks(10),
+        set_html_breaks(3),
         renderTextillate({
           textillate(paste0("1 null hypothesis was rejected. See full results by downloading below."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
@@ -1535,7 +1535,7 @@ BatchBHcountServer <- function(input, output, session, BatchBHresult) {
       )
     } else {
       div(
-        set_html_breaks(10),
+        set_html_breaks(3),
         renderTextillate({
           textillate(paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
@@ -1588,7 +1588,7 @@ BatchStBHcountServer <- function(input, output, session, BatchStBHresult) {
     data <- BatchStBHresult$BatchStBHres()
     if(sum(data$R) == 1) {
       div(
-        set_html_breaks(10),
+        set_html_breaks(3),
         renderTextillate({
           textillate(paste0("1 null hypothesis was rejected. See full results by downloading below."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
@@ -1609,7 +1609,7 @@ BatchStBHcountServer <- function(input, output, session, BatchStBHresult) {
       )
     } else {
       div(
-        set_html_breaks(10),
+        set_html_breaks(3),
         renderTextillate({
           textillate(paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
@@ -2014,7 +2014,11 @@ BatchPRDSplotServer <- function(input, output, session, BatchPRDSresult) {
     )
     ex <- list(title = "Batch", titlefont = font, dtick = 1)
     why <- list(title = "Log adjusted test level", titlefont = font)
-    plot_ly(BatchPRDSresult$BatchPRDSres(), x = ~batch, y = ~log(alphai)) %>%
+    
+    new_data <- BatchPRDSresult$BatchPRDSres() %>%
+      distinct(batch, .keep_all = TRUE)
+      
+    plot_ly(new_data, x = ~batch, y = ~log(alphai)) %>%
       add_lines(mode = "lines+markers") %>%
       layout(xaxis = ex, yaxis = why)
   }) %>%
@@ -2054,7 +2058,11 @@ BatchBHplotServer <- function(input, output, session, BatchBHresult) {
     )
     ex <- list(title = "Batch", titlefont = font, dtick = 1)
     why <- list(title = "Log adjusted test level", titlefont = font)
-    plot_ly(BatchBHresult$BatchBHres(), x = ~batch, y = ~log(alphai)) %>%
+    
+    new_data <- BatchBHresult$BatchBHres() %>%
+      distinct(batch, .keep_all = TRUE)
+    
+    plot_ly(new_data, x = ~batch, y = ~log(alphai)) %>%
       add_lines(mode = "lines+markers") %>%
       layout(xaxis = ex, yaxis = why)
   }) %>%
@@ -2094,7 +2102,11 @@ BatchStBHplotServer <- function(input, output, session, BatchStBHresult) {
     )
     ex <- list(title = "Batch", titlefont = font, dtick = 1)
     why <- list(title = "Log adjusted test level", titlefont = font)
-    plot_ly(BatchStBHresult$BatchStBHres(), x = ~batch, y = ~log(alphai)) %>%
+    
+    new_data <- BatchStBHresult$BatchStBHres() %>%
+      distinct(batch, .keep_all = TRUE)
+    
+    plot_ly(new_data, x = ~batch, y = ~log(alphai)) %>%
       add_lines(mode = "lines+markers") %>%
       layout(xaxis = ex, yaxis = why)
   }) %>%
@@ -2638,7 +2650,142 @@ BatchPRDScompServer <- function(input, output, session, BatchPRDSresult, data) {
     set.seed(47)
     switch(alg,
            BatchPRDS = BatchPRDS(data),
-           BatchBH = BatcBH(data),
+           BatchBH = BatchBH(data),
            BatchStBH = BatchStBH(data))
   }
+  
+  data_to_plot <- eventReactive(input$batchcompare, {
+    
+    select_alg_rx <- reactive({
+      out <- select_alg(alg = input$batchalg, data = data())
+    })
+    
+    select_alg_data <- select_alg_rx() %>% 
+      distinct(batch, .keep_all = TRUE)
+    
+    current_alg_data <- BatchPRDSresult$BatchPRDSres() %>%
+      distinct(batch, .keep_all = TRUE)
+    
+    data_to_plot <- cbind(current_alg_data, select_alg_data$alphai) %>%
+      mutate(BatchPRDS = log(alphai),
+             !!rlang::quo_name(input$batchalg) := log(select_alg_data$alphai),
+             Bonferroni = rep(log(0.05/nrow(.)), nrow(.)),
+             Unadjusted = rep(log(0.05), nrow(.))) %>%
+      pivot_longer(cols = c(BatchPRDS, !!rlang::quo_name(input$batchalg), Bonferroni, Unadjusted),
+                   names_to = "adjustment",
+                   values_to = "alpha")
+  })
+  
+  output$batchcomp <- renderPlotly({
+    if(!is.null(data_to_plot())) {
+      data_to_plot <- data_to_plot()
+      
+      font <- list(
+        family = "Lato"
+      )
+      ex <- list(title = "Batch", titlefont = font)
+      why <- list(title = "Log adjusted test level", titlefont = font)
+      plot_ly(data_to_plot, x = ~batch, y = ~alpha, color = ~adjustment) %>%
+        add_lines(mode = "lines+markers") %>%
+        layout(xaxis = ex, yaxis = why)
+    }
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(data_to_plot() %>% slice_tail())
+}
+BatchBHcompServer <- function(input, output, session, BatchBHresult, data) {
+  select_alg <- function(alg, data) {
+    set.seed(47)
+    switch(alg,
+           BatchPRDS = BatchPRDS(data),
+           BatchBH = BatchBH(data),
+           BatchStBH = BatchStBH(data))
+  }
+  
+  data_to_plot <- eventReactive(input$batchcompare, {
+    
+    select_alg_rx <- reactive({
+      out <- select_alg(alg = input$batchalg, data = data())
+    })
+    
+    select_alg_data <- select_alg_rx() %>% 
+      distinct(batch, .keep_all = TRUE)
+    
+    current_alg_data <- BatchBHresult$BatchBHres() %>%
+      distinct(batch, .keep_all = TRUE)
+    
+    data_to_plot <- cbind(current_alg_data, select_alg_data$alphai) %>%
+      mutate(BatchBH = log(alphai),
+             !!rlang::quo_name(input$batchalg) := log(select_alg_data$alphai),
+             Bonferroni = rep(log(0.05/nrow(.)), nrow(.)),
+             Unadjusted = rep(log(0.05), nrow(.))) %>%
+      pivot_longer(cols = c(BatchBH, !!rlang::quo_name(input$batchalg), Bonferroni, Unadjusted),
+                   names_to = "adjustment",
+                   values_to = "alpha")
+  })
+  
+  output$batchcomp <- renderPlotly({
+    if(!is.null(data_to_plot())) {
+      data_to_plot <- data_to_plot()
+      
+      font <- list(
+        family = "Lato"
+      )
+      ex <- list(title = "Batch", titlefont = font)
+      why <- list(title = "Log adjusted test level", titlefont = font)
+      plot_ly(data_to_plot, x = ~batch, y = ~alpha, color = ~adjustment) %>%
+        add_lines(mode = "lines+markers") %>%
+        layout(xaxis = ex, yaxis = why)
+    }
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(data_to_plot() %>% slice_tail())
+}
+BatchStBHcompServer <- function(input, output, session, BatchStBHresult, data) {
+  select_alg <- function(alg, data) {
+    set.seed(47)
+    switch(alg,
+           BatchPRDS = BatchPRDS(data),
+           BatchBH = BatchBH(data),
+           BatchStBH = BatchStBH(data))
+  }
+  
+  data_to_plot <- eventReactive(input$batchcompare, {
+    
+    select_alg_rx <- reactive({
+      out <- select_alg(alg = input$batchalg, data = data())
+    })
+    
+    select_alg_data <- select_alg_rx() %>% 
+      distinct(batch, .keep_all = TRUE)
+    
+    current_alg_data <- BatchStBHresult$BatchStBHres() %>%
+      distinct(batch, .keep_all = TRUE)
+    
+    data_to_plot <- cbind(current_alg_data, select_alg_data$alphai) %>%
+      mutate(BatchStBH = log(alphai),
+             !!rlang::quo_name(input$batchalg) := log(select_alg_data$alphai),
+             Bonferroni = rep(log(0.05/nrow(.)), nrow(.)),
+             Unadjusted = rep(log(0.05), nrow(.))) %>%
+      pivot_longer(cols = c(BatchStBH, !!rlang::quo_name(input$batchalg), Bonferroni, Unadjusted),
+                   names_to = "adjustment",
+                   values_to = "alpha")
+  })
+  
+  output$batchcomp <- renderPlotly({
+    if(!is.null(data_to_plot())) {
+      data_to_plot <- data_to_plot()
+      
+      font <- list(
+        family = "Lato"
+      )
+      ex <- list(title = "Batch", titlefont = font)
+      why <- list(title = "Log adjusted test level", titlefont = font)
+      plot_ly(data_to_plot, x = ~batch, y = ~alpha, color = ~adjustment) %>%
+        add_lines(mode = "lines+markers") %>%
+        layout(xaxis = ex, yaxis = why)
+    }
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(data_to_plot() %>% slice_tail())
 }

@@ -530,6 +530,34 @@ compareUI <- function(id) {
   ) #close taglist
 }
 
+batchcompareUI <- function(id) {
+  ns <- NS(id)
+  
+  tagList(
+    br(),
+    p("Make sure you already clicked Calculate. Clicking the 'Compare' button compares the results of two algorithms. Parameters for the selected algorithm are assumed to be same as those for the current algorithm, otherwise they are set to the default values (see Help)."),
+    column(width = 12,
+           align = "center",
+           div(style = "display: inline-block;vertical-align:top;text-align:center",
+               strong("Pick an algorithm for comparison"),
+               shiny::selectInput(ns("batchalg"), NULL, c("BatchPRDS", "BatchBH", "BatchStBH")))),
+    shinyWidgets::actionBttn(
+      inputId = ns("batchcompare"),
+      label = "Compare",
+      style = "fill",
+      color = "primary"
+    ),
+    br(),
+    plotlyOutput(ns("batchcomp")) %>%
+      shinycssloaders::withSpinner(type = 6,
+                                   color = "#0066CC"),
+    # br(),
+    # plotlyOutput(ns("batchcomp2")) %>%
+    #   shinycssloaders::withSpinner(type = 6,
+    #                                color = "#0066CC")
+  ) #close taglist
+}
+
 plotUI <- function(id) {
   ns <- NS(id)
   
@@ -585,7 +613,7 @@ placeholderUI <- function(id) {
       "Nothing calculated yet",
       style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 18px")
   )
 }
@@ -598,7 +626,20 @@ placeholder2UI <- function(id) {
       "Nothing calculated yet",
       style = "text-align: center;
     vertical-align: middle;
-    font-family: Poppins, sans-serif;
+    font-family: Lato, sans-serif;
+    font-size: 18px")
+  )
+}
+
+placeholdermodUI <- function(id, n_breaks = 10) {
+  ns <- NS(id)
+  fluidRow(
+    p(id = ns("placeholder"), 
+      set_html_breaks(n_breaks),
+      "Nothing calculated yet",
+      style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
     font-size: 18px")
   )
 }

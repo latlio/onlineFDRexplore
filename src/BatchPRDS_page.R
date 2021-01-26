@@ -29,8 +29,8 @@ shiny::fluidRow(
                   shiny::tabPanel("Plot",
                                   placeholder2UI("inputBatchPRDS"),
                                   batchplotUI("BatchPRDSplot")),
-                  # shiny::tabPanel("Compare",
-                  #                 batchcompareUI("BatchPRDScomp")),
+                  shiny::tabPanel("Compare",
+                                  batchcompareUI("BatchPRDScomp")),
                   shiny::tabPanel("Help", withMathJax(),
                                   HTML(markdown::markdownToHTML(knit("src/BatchPRDS_code.Rmd", quiet = T))))
                 ) ## close tabset panel
