@@ -2131,6 +2131,7 @@ BatchStBHplotServer <- function(input, output, session, BatchStBHresult) {
 #### COMPARE SERVERS ####
 LONDcompServer <- function(input, output, session, LONDresult, data) {
   select_alg <- function(alg, data) {
+    set.seed(47)
     switch(alg,
            LOND = LOND(data),
            LORD = LORD(data),
@@ -2230,6 +2231,7 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
 }
 LORDcompServer <- function(input, output, session, LORDresult, data) {
   select_alg <- function(alg, data) {
+    set.seed(47)
     switch(alg,
            LOND = LOND(data),
            LORD = LORD(data),
@@ -2252,11 +2254,11 @@ LORDcompServer <- function(input, output, session, LORDresult, data) {
     
     data_to_plot <- cbind(current_alg_data, select_alg_data$alphainew) %>%
       mutate(index = row_number(),
-             LORD = log(alphai),
+             CurrentLORD = log(alphai),
              !!rlang::quo_name(input$alg) := log(select_alg_data$alphainew),
              Bonferroni = log(0.05/index),
              Unadjusted = rep(log(0.05), nrow(.))) %>%
-      pivot_longer(cols = c(LORD, !!rlang::quo_name(input$alg), Bonferroni, Unadjusted),
+      pivot_longer(cols = c(CurrentLORD, !!rlang::quo_name(input$alg), Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
   })
@@ -2330,6 +2332,7 @@ LORDcompServer <- function(input, output, session, LORDresult, data) {
 }
 SAFFRONcompServer <- function(input, output, session, SAFFRONresult, data) {
   select_alg <- function(alg, data) {
+    set.seed(47)
     switch(alg,
            LOND = LOND(data),
            LORD = LORD(data),
@@ -2430,6 +2433,7 @@ SAFFRONcompServer <- function(input, output, session, SAFFRONresult, data) {
 }
 ADDIScompServer <- function(input, output, session, ADDISresult, data) {
   select_alg <- function(alg, data) {
+    set.seed(47)
     switch(alg,
            LOND = LOND(data),
            LORD = LORD(data),
@@ -2530,6 +2534,7 @@ ADDIScompServer <- function(input, output, session, ADDISresult, data) {
 }
 alphainvestingcompServer <- function(input, output, session, alphainvestingresult, data) {
   select_alg <- function(alg, data) {
+    set.seed(47)
     switch(alg,
            LOND = LOND(data),
            LORD = LORD(data),
