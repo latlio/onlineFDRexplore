@@ -2633,3 +2633,12 @@ alphainvestingcompServer <- function(input, output, session, alphainvestingresul
     }
   })
 }
+BatchPRDScompServer <- function(input, output, session, BatchPRDSresult, data) {
+  select_alg <- function(alg, data) {
+    set.seed(47)
+    switch(alg,
+           BatchPRDS = BatchPRDS(data),
+           BatchBH = BatcBH(data),
+           BatchStBH = BatchStBH(data))
+  }
+}
