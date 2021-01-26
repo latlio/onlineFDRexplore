@@ -2151,7 +2151,8 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
            LORDdiscard = LORD(data, version = "discard"),
            LORDdep = LORD(data, version = "dep"),
            SAFFRON = SAFFRON(data),
-           ADDIS = ADDIS(data))
+           ADDIS = ADDIS(data),
+           AlphaInvesting = Alpha_investing(data))
   }
   
   data_to_plot <- eventReactive(input$compare, {
@@ -2251,7 +2252,8 @@ LORDcompServer <- function(input, output, session, LORDresult, data) {
            LORDdiscard = LORD(data, version = "discard"),
            LORDdep = LORD(data, version = "dep"),
            SAFFRON = SAFFRON(data),
-           ADDIS = ADDIS(data))
+           ADDIS = ADDIS(data),
+           AlphaInvesting = Alpha_investing(data))
   }
   
   data_to_plot <- eventReactive(input$compare, {
@@ -2352,7 +2354,8 @@ SAFFRONcompServer <- function(input, output, session, SAFFRONresult, data) {
            LORDdiscard = LORD(data, version = "discard"),
            LORDdep = LORD(data, version = "dep"),
            SAFFRON = SAFFRON(data),
-           ADDIS = ADDIS(data))
+           ADDIS = ADDIS(data),
+           AlphaInvesting = Alpha_investing(data))
   }
   
   data_to_plot <- eventReactive(input$compare, {
@@ -2453,7 +2456,8 @@ ADDIScompServer <- function(input, output, session, ADDISresult, data) {
            LORDdiscard = LORD(data, version = "discard"),
            LORDdep = LORD(data, version = "dep"),
            SAFFRON = SAFFRON(data),
-           ADDIS = ADDIS(data))
+           ADDIS = ADDIS(data),
+           AlphaInvesting = Alpha_investing(data))
   }
   
   data_to_plot <- eventReactive(input$compare, {
@@ -2554,7 +2558,8 @@ alphainvestingcompServer <- function(input, output, session, alphainvestingresul
            LORDdiscard = LORD(data, version = "discard"),
            LORDdep = LORD(data, version = "dep"),
            SAFFRON = SAFFRON(data),
-           ADDIS = ADDIS(data))
+           ADDIS = ADDIS(data),
+           AlphaInvesting = Alpha_investing(data))
   }
   
   data_to_plot <- eventReactive(input$compare, {

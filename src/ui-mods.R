@@ -514,7 +514,7 @@ compareUI <- function(id) {
            align = "center",
            div(style = "display: inline-block;vertical-align:top;text-align:center",
                strong("Pick an algorithm for comparison"),
-               shiny::selectInput(ns("alg"), NULL, c("LOND", "LORD", "LORD3", "LORDdiscard", "LORDdep", "SAFFRON", "ADDIS")))),
+               shiny::selectInput(ns("alg"), NULL, c("LOND", "LORD", "LORD3", "LORDdiscard", "LORDdep", "SAFFRON", "ADDIS", "AlphaInvesting")))),
     shinyWidgets::actionBttn(
       inputId = ns("compare"),
       label = "Compare",
