@@ -1,8 +1,8 @@
 ################################################################################
-# Batch PRDS Page
+# Batch BH Page
 #
 # Author: Lathan Liou
-# Created: Mon Jan 25 14:14:07 2021 ------------------------------
+# Created: Tue Jan 26 13:08:41 2021 ------------------------------
 ################################################################################
 
 shiny::fluidRow(
@@ -10,12 +10,12 @@ shiny::fluidRow(
   #### put input area here ####
   shiny::column(4,
                 box(
-                  title = strong("Batch PRDS"),
+                  title = strong("Batch BH"),
                   status = "primary",
                   solidHeader = TRUE,
                   tags$link(rel = "stylesheet", type = "text/css", href = "www/css/styles.css"),
                   width = 12,
-                  BatchUI("inputBatchPRDS")
+                  BatchUI("inputBatchBH")
                 )
   ), ## close column 1
   
@@ -24,15 +24,15 @@ shiny::fluidRow(
                 shiny::tabsetPanel(
                   shiny::tabPanel("Summary",
                                   shinybusy::add_busy_bar(color = "#266EAB"),
-                                  placeholderUI("inputBatchPRDS"),
-                                  summaryUI("BatchPRDScount")),
+                                  placeholderUI("inputBatchBH"),
+                                  summaryUI("BatchBHcount")),
                   shiny::tabPanel("Plot",
-                                  placeholder2UI("inputBatchPRDS"),
-                                  batchplotUI("BatchPRDSplot")),
+                                  placeholder2UI("inputBatchBH"),
+                                  batchplotUI("BatchBHplot")),
                   # shiny::tabPanel("Compare",
                   #                 batchcompareUI("BatchPRDScomp")),
                   shiny::tabPanel("Help", withMathJax(),
-                                  HTML(markdown::markdownToHTML(knit("src/BatchPRDS_code.Rmd", quiet = T))))
+                                  HTML(markdown::markdownToHTML(knit("src/BatchBH_code.Rmd", quiet = T))))
                 ) ## close tabset panel
                 
   ) ## close column

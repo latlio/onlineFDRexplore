@@ -791,6 +791,275 @@ alphainvestingServer <- function(input, output, session, data) {
   
   list(alphainvestingres = alphainvestingres)
 }
+BatchPRDSServer <- function(input, output, session, data) {
+  ns <- session$ns
+  
+  # Run BatchPRDS algorithm
+  BatchPRDSres <- reactive({
+    #check parameters
+    alpha = as.numeric(input$alpha)
+    
+    #provide user feedback
+    observeEvent(input$alpha, {
+      req(input$alpha)
+      if(as.numeric(input$alpha) > 1 | as.numeric(input$alpha) <= 0 |
+         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "alpha",
+          text = "Value not between 0 and 1",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("alpha")
+      }
+    }, ignoreNULL = FALSE
+    )
+    
+    if(!is.null(data())) {
+      # shiny::showModal(modalDialog("Running algorithm..."))
+    }
+    
+    #cache collision?
+    out <- BatchPRDS(d = data(),
+                     alpha = alpha)
+    shiny::removeModal()
+    
+    out
+  }) %>% bindCache(input$alpha) %>%
+    bindEvent(input$go)
+  
+  #record user params
+  user_params <- reactive({
+    params <- reactiveValuesToList(input)
+    data.frame(
+      param = names(params),
+      value = unlist(params, use.names = FALSE)
+    ) %>%
+      filter(param != "go",
+             param != "download2_bttn")
+  })
+  
+  # remove placeholder text
+  observeEvent(input$go, {
+    
+    if(input$go == 0){
+      shinyjs::show(id = "placeholder")
+      shinyjs::show(id = "placeholder2")
+    } else if(input$go > 0 && !is.null(data())) {
+      shinyjs::hide(id = "placeholder")
+      shinyjs::hide(id = "placeholder2")
+    } 
+    else {
+      shinyjs::show(id = "placeholder")
+      shinyjs::show(id = "placeholder2")
+    }
+    
+  })
+  
+  # Output error messages
+  observeEvent(input$go, {
+    
+    if(!is.null(data())){
+      tryCatch({
+        BatchPRDSres()
+      },
+      error = function(err){
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
+      })
+    }
+  })
+  
+  #download params
+  output$download2 <- downloadHandler(
+    filename = function() {
+      paste("BatchPRDSparams-", Sys.Date(), ".csv", sep = "")
+    },
+    content = function(file) {
+      write_csv(user_params(), file)
+    }
+  )
+  
+  list(BatchPRDSres = BatchPRDSres)
+}
+BatchBHServer <- function(input, output, session, data) {
+  ns <- session$ns
+  
+  # Run BatchBH algorithm
+  BatchBHres <- reactive({
+    #check parameters
+    alpha = as.numeric(input$alpha)
+    
+    #provide user feedback
+    observeEvent(input$alpha, {
+      req(input$alpha)
+      if(as.numeric(input$alpha) > 1 | as.numeric(input$alpha) <= 0 |
+         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "alpha",
+          text = "Value not between 0 and 1",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("alpha")
+      }
+    }, ignoreNULL = FALSE
+    )
+    
+    if(!is.null(data())) {
+      # shiny::showModal(modalDialog("Running algorithm..."))
+    }
+    
+    #cache collision?
+    out <- BatchBH(d = data(),
+                     alpha = alpha)
+    shiny::removeModal()
+    
+    out
+  }) %>% bindCache(input$alpha) %>%
+    bindEvent(input$go)
+  
+  #record user params
+  user_params <- reactive({
+    params <- reactiveValuesToList(input)
+    data.frame(
+      param = names(params),
+      value = unlist(params, use.names = FALSE)
+    ) %>%
+      filter(param != "go",
+             param != "download2_bttn")
+  })
+  
+  # remove placeholder text
+  observeEvent(input$go, {
+    
+    if(input$go == 0){
+      shinyjs::show(id = "placeholder")
+      shinyjs::show(id = "placeholder2")
+    } else if(input$go > 0 && !is.null(data())) {
+      shinyjs::hide(id = "placeholder")
+      shinyjs::hide(id = "placeholder2")
+    } 
+    else {
+      shinyjs::show(id = "placeholder")
+      shinyjs::show(id = "placeholder2")
+    }
+    
+  })
+  
+  # Output error messages
+  observeEvent(input$go, {
+    
+    if(!is.null(data())){
+      tryCatch({
+        BatchBHres()
+      },
+      error = function(err){
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
+      })
+    }
+  })
+  
+  #download params
+  output$download2 <- downloadHandler(
+    filename = function() {
+      paste("BatchBHparams-", Sys.Date(), ".csv", sep = "")
+    },
+    content = function(file) {
+      write_csv(user_params(), file)
+    }
+  )
+  
+  list(BatchBHres = BatchBHres)
+}
+BatchStBHServer <- function(input, output, session, data) {
+  ns <- session$ns
+  
+  # Run BatchStBH algorithm
+  BatchStBHres <- reactive({
+    #check parameters
+    alpha = as.numeric(input$alpha)
+    
+    #provide user feedback
+    observeEvent(input$alpha, {
+      req(input$alpha)
+      if(as.numeric(input$alpha) > 1 | as.numeric(input$alpha) <= 0 |
+         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "alpha",
+          text = "Value not between 0 and 1",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("alpha")
+      }
+    }, ignoreNULL = FALSE
+    )
+    
+    if(!is.null(data())) {
+      # shiny::showModal(modalDialog("Running algorithm..."))
+    }
+    
+    #cache collision?
+    out <- BatchStBH(d = data(),
+                   alpha = alpha)
+    shiny::removeModal()
+    
+    out
+  }) %>% bindCache(input$alpha) %>%
+    bindEvent(input$go)
+  
+  #record user params
+  user_params <- reactive({
+    params <- reactiveValuesToList(input)
+    data.frame(
+      param = names(params),
+      value = unlist(params, use.names = FALSE)
+    ) %>%
+      filter(param != "go",
+             param != "download2_bttn")
+  })
+  
+  # remove placeholder text
+  observeEvent(input$go, {
+    
+    if(input$go == 0){
+      shinyjs::show(id = "placeholder")
+      shinyjs::show(id = "placeholder2")
+    } else if(input$go > 0 && !is.null(data())) {
+      shinyjs::hide(id = "placeholder")
+      shinyjs::hide(id = "placeholder2")
+    } 
+    else {
+      shinyjs::show(id = "placeholder")
+      shinyjs::show(id = "placeholder2")
+    }
+  })
+  
+  # Output error messages
+  observeEvent(input$go, {
+    
+    if(!is.null(data())){
+      tryCatch({
+        BatchStBHres()
+      },
+      error = function(err){
+        shiny::showNotification(paste0(err), type = "err", duration = NULL)
+      })
+    }
+  })
+  
+  #download params
+  output$download2 <- downloadHandler(
+    filename = function() {
+      paste("BatchStBHparams-", Sys.Date(), ".csv", sep = "")
+    },
+    content = function(file) {
+      write_csv(user_params(), file)
+    }
+  )
+  
+  list(BatchStBHres = BatchStBHres)
+}
 
 #### COUNT SERVERS ####
 LONDcountServer <- function(input, output, session, LONDresult) {
@@ -798,7 +1067,6 @@ LONDcountServer <- function(input, output, session, LONDresult) {
   #toggle download button
   observe({
     toggle(id = "downloadbutton")
-    # shinyanimate::startAnim(session, "downloadbutton", "fadeInDown")
   })
   
   output$count <- renderUI({
@@ -1153,6 +1421,228 @@ alphainvestingcountServer <- function(input, output, session, alphainvestingresu
       filename <- paste("alphainvesting-", Sys.Date(), ".csv", sep = "")
       write_csv(alphainvestingresult$alphainvestingres(), filename)
       R_session <- paste("alphainvesting-", Sys.Date(), "sessioninfo.txt", sep = "")
+      writeLines(capture.output(sessionInfo()), R_session)
+      files <- c(filename, R_session)
+      zip(file, files)
+    }
+  )
+}
+BatchPRDScountServer <- function(input, output, session, BatchPRDSresult) {
+  ns <- session$ns
+  
+  #toggle download button
+  observe({
+    toggle(id = "downloadbutton")
+  })
+  
+  output$count <- renderUI({
+    
+    data <- BatchPRDSresult$BatchPRDSres()
+    if(sum(data$R) == 1) {
+      div(
+        set_html_breaks(10),
+        renderTextillate({
+          textillate(paste0("1 null hypothesis was rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
+        set_html_breaks(2),
+        shinyWidgets::downloadBttn(
+          outputId = ns("download"),
+          label = "Download results",
+          style = "fill",
+          color = "primary",
+          size = "sm"
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
+      )
+    } else {
+      div(
+        set_html_breaks(10),
+        renderTextillate({
+          textillate(paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
+        set_html_breaks(2),
+        shinyWidgets::downloadBttn(
+          outputId = ns("download"),
+          label = "Download results",
+          style = "fill",
+          color = "primary",
+          size = "sm"
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
+      )
+    }
+  })
+  
+  output$download <- downloadHandler(
+    filename = function() {
+      paste("BatchPRDS-", Sys.Date(), ".zip", sep = "")
+    },
+    content = function(file) {
+      owd <- setwd(tempdir())
+      on.exit(setwd(owd))
+      files <- NULL;
+      
+      filename <- paste("BatchPRDS-", Sys.Date(), ".csv", sep = "")
+      write_csv(BatchPRDSresult$BatchPRDSres(), filename)
+      R_session <- paste("BatchPRDS-", Sys.Date(), "sessioninfo.txt", sep = "")
+      writeLines(capture.output(sessionInfo()), R_session)
+      files <- c(filename, R_session)
+      zip(file, files)
+    }
+  )
+}
+BatchBHcountServer <- function(input, output, session, BatchBHresult) {
+  ns <- session$ns
+  
+  #toggle download button
+  observe({
+    toggle(id = "downloadbutton")
+  })
+  
+  output$count <- renderUI({
+    
+    data <- BatchBHresult$BatchBHres()
+    if(sum(data$R) == 1) {
+      div(
+        set_html_breaks(10),
+        renderTextillate({
+          textillate(paste0("1 null hypothesis was rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
+        set_html_breaks(2),
+        shinyWidgets::downloadBttn(
+          outputId = ns("download"),
+          label = "Download results",
+          style = "fill",
+          color = "primary",
+          size = "sm"
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
+      )
+    } else {
+      div(
+        set_html_breaks(10),
+        renderTextillate({
+          textillate(paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
+        set_html_breaks(2),
+        shinyWidgets::downloadBttn(
+          outputId = ns("download"),
+          label = "Download results",
+          style = "fill",
+          color = "primary",
+          size = "sm"
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
+      )
+    }
+  })
+  
+  output$download <- downloadHandler(
+    filename = function() {
+      paste("BatchBH-", Sys.Date(), ".zip", sep = "")
+    },
+    content = function(file) {
+      owd <- setwd(tempdir())
+      on.exit(setwd(owd))
+      files <- NULL;
+      
+      filename <- paste("BatchBH-", Sys.Date(), ".csv", sep = "")
+      write_csv(BatchBHresult$BatchBHres(), filename)
+      R_session <- paste("BatchBH-", Sys.Date(), "sessioninfo.txt", sep = "")
+      writeLines(capture.output(sessionInfo()), R_session)
+      files <- c(filename, R_session)
+      zip(file, files)
+    }
+  )
+}
+BatchStBHcountServer <- function(input, output, session, BatchStBHresult) {
+  ns <- session$ns
+  
+  #toggle download button
+  observe({
+    toggle(id = "downloadbutton")
+  })
+  
+  output$count <- renderUI({
+    
+    data <- BatchStBHresult$BatchStBHres()
+    if(sum(data$R) == 1) {
+      div(
+        set_html_breaks(10),
+        renderTextillate({
+          textillate(paste0("1 null hypothesis was rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
+        set_html_breaks(2),
+        shinyWidgets::downloadBttn(
+          outputId = ns("download"),
+          label = "Download results",
+          style = "fill",
+          color = "primary",
+          size = "sm"
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
+      )
+    } else {
+      div(
+        set_html_breaks(10),
+        renderTextillate({
+          textillate(paste0(sum(data$R), " null hypotheses were rejected. See full results by downloading below."), auto.start = TRUE) %>%
+            textillateIn(effect = "fadeInDown",
+                         sync = T)
+        }),
+        set_html_breaks(2),
+        shinyWidgets::downloadBttn(
+          outputId = ns("download"),
+          label = "Download results",
+          style = "fill",
+          color = "primary",
+          size = "sm"
+        ),
+        style = "text-align: center;
+    vertical-align: middle;
+    font-family: Lato, sans-serif;
+    font-size: 18px"
+      )
+    }
+  })
+  
+  output$download <- downloadHandler(
+    filename = function() {
+      paste("BatchStBH-", Sys.Date(), ".zip", sep = "")
+    },
+    content = function(file) {
+      owd <- setwd(tempdir())
+      on.exit(setwd(owd))
+      files <- NULL;
+      
+      filename <- paste("BatchStBH-", Sys.Date(), ".csv", sep = "")
+      write_csv(BatchStBHresult$BatchStBHres(), filename)
+      R_session <- paste("BatchStBH-", Sys.Date(), "sessioninfo.txt", sep = "")
       writeLines(capture.output(sessionInfo()), R_session)
       files <- c(filename, R_session)
       zip(file, files)
@@ -1516,6 +2006,126 @@ alphainvestingplotServer <- function(input, output, session, alphainvestingresul
     font-size: 18px"
     ) #close div
   })
+}
+BatchPRDSplotServer <- function(input, output, session, BatchPRDSresult) {
+  output$bplot1 <- renderPlotly({
+    font <- list(
+      family = "Lato"
+    )
+    ex <- list(title = "Batch", titlefont = font, dtick = 1)
+    why <- list(title = "Log adjusted test level", titlefont = font)
+    plot_ly(BatchPRDSresult$BatchPRDSres(), x = ~batch, y = ~log(alphai)) %>%
+      add_lines(mode = "lines+markers") %>%
+      layout(xaxis = ex, yaxis = why)
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(BatchPRDSresult$BatchPRDSres() %>% slice_tail())
+  
+  output$bplot2 <- renderPlotly({
+    font <- list(
+      family = "Lato"
+    )
+    ex <- list(title = "Batch", titlefont = font)
+    why <- list(title = "Number of Rejections", titlefont = font)
+    
+    #modify data
+    new_data <- BatchPRDSresult$BatchPRDSres() %>%
+      group_by(batch) %>%
+      mutate(RBonf = pval <= (0.05/nrow(.)),
+             RUnadj = pval <= 0.05) %>%
+      summarize(BatchPRDS = sum(R),
+                Bonferroni = sum(RBonf),
+                Unadjusted = sum(RUnadj)) %>%
+      ungroup() %>%
+      pivot_longer(cols = c(BatchPRDS, Bonferroni, Unadjusted),
+                   names_to = "adjustment",
+                   values_to = "R")
+    
+    plot_ly(new_data, x = ~batch, y = ~R, type = "bar", color = ~adjustment) %>%
+      layout(xaxis = ex, yaxis = why)
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(BatchPRDSresult$BatchPRDSres() %>% slice_head())
+}
+BatchBHplotServer <- function(input, output, session, BatchBHresult) {
+  output$bplot1 <- renderPlotly({
+    font <- list(
+      family = "Lato"
+    )
+    ex <- list(title = "Batch", titlefont = font, dtick = 1)
+    why <- list(title = "Log adjusted test level", titlefont = font)
+    plot_ly(BatchBHresult$BatchBHres(), x = ~batch, y = ~log(alphai)) %>%
+      add_lines(mode = "lines+markers") %>%
+      layout(xaxis = ex, yaxis = why)
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(BatchBHresult$BatchBHres() %>% slice_tail())
+  
+  output$bplot2 <- renderPlotly({
+    font <- list(
+      family = "Lato"
+    )
+    ex <- list(title = "Batch", titlefont = font)
+    why <- list(title = "Number of Rejections", titlefont = font)
+    
+    #modify data
+    new_data <- BatchBHresult$BatchBHres() %>%
+      group_by(batch) %>%
+      mutate(RBonf = pval <= (0.05/nrow(.)),
+             RUnadj = pval <= 0.05) %>%
+      summarize(BatchBH = sum(R),
+                Bonferroni = sum(RBonf),
+                Unadjusted = sum(RUnadj)) %>%
+      ungroup() %>%
+      pivot_longer(cols = c(BatchBH, Bonferroni, Unadjusted),
+                   names_to = "adjustment",
+                   values_to = "R")
+    
+    plot_ly(new_data, x = ~batch, y = ~R, type = "bar", color = ~adjustment) %>%
+      layout(xaxis = ex, yaxis = why)
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(BatchBHresult$BatchBHres() %>% slice_head())
+}
+BatchStBHplotServer <- function(input, output, session, BatchStBHresult) {
+  output$bplot1 <- renderPlotly({
+    font <- list(
+      family = "Lato"
+    )
+    ex <- list(title = "Batch", titlefont = font, dtick = 1)
+    why <- list(title = "Log adjusted test level", titlefont = font)
+    plot_ly(BatchStBHresult$BatchStBHres(), x = ~batch, y = ~log(alphai)) %>%
+      add_lines(mode = "lines+markers") %>%
+      layout(xaxis = ex, yaxis = why)
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(BatchStBHresult$BatchStBHres() %>% slice_tail())
+  
+  output$bplot2 <- renderPlotly({
+    font <- list(
+      family = "Lato"
+    )
+    ex <- list(title = "Batch", titlefont = font)
+    why <- list(title = "Number of Rejections", titlefont = font)
+    
+    #modify data
+    new_data <- BatchStBHresult$BatchStBHres() %>%
+      group_by(batch) %>%
+      mutate(RBonf = pval <= (0.05/nrow(.)),
+             RUnadj = pval <= 0.05) %>%
+      summarize(BatchStBH = sum(R),
+                Bonferroni = sum(RBonf),
+                Unadjusted = sum(RUnadj)) %>%
+      ungroup() %>%
+      pivot_longer(cols = c(BatchStBH, Bonferroni, Unadjusted),
+                   names_to = "adjustment",
+                   values_to = "R")
+    
+    plot_ly(new_data, x = ~batch, y = ~R, type = "bar", color = ~adjustment) %>%
+      layout(xaxis = ex, yaxis = why)
+  }) %>%
+    #only need small chunk of data to use as cache key
+    bindCache(BatchStBHresult$BatchStBHres() %>% slice_head())
 }
 
 #### COMPARE SERVERS ####

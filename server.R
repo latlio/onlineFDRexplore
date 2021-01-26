@@ -112,7 +112,7 @@ server <- function(input, output, session) {
   #Dynamically display alg jump button ONLY when file is uploaded
   output$showjump <- renderUI({
     if(is.null(in_data())) return()
-    shiny::selectInput("tabjump", "Take me to the following algorithm page", c("Select","LOND", "LORD", "SAFFRON", "ADDIS"))
+    shiny::selectizeInput("tabjump", "Take me to the following algorithm page", list(Select = "Select", `Fully Sequential` = c("LOND", "LORD", "SAFFRON", "ADDIS", "Alpha-Investing"), Batch = c("BatchPRDS", "BatchBH", "BatchStBH")))
   })
   
   #jump to user-clicked algorithm
@@ -125,8 +125,15 @@ server <- function(input, output, session) {
       updateTabsetPanel(session, "navmaster", selected = "SAFFRON")
     } else if (input$tabjump == "ADDIS") {
       updateTabsetPanel(session, "navmaster", selected = "ADDIS")
+    } else if (input$tabjump == "Alpha-Investing") {
+      updateTabsetPanel(session, "navmaster", selected = "Alpha-Investing")
+    } else if (input$tabjump == "BatchPRDS") {
+      updateTabsetPanel(session, "navmaster", selected = "BatchPRDS")
+    } else if (input$tabjump == "BatchBH") {
+      updateTabsetPanel(session, "navmaster", selected = "BatchBH")
+    } else if (input$tabjump == "BatchStBH") {
+      updateTabsetPanel(session, "navmaster", selected = "BatchStBH")
     }
-    
   })
   
   #output warning if wrong file type
@@ -179,5 +186,20 @@ server <- function(input, output, session) {
   callModule(alphainvestingcountServer, "alphainvestcount", alphainvesting_result)
   callModule(alphainvestingplotServer, "alphainvestplot", alphainvesting_result)
   callModule(alphainvestingcompServer, "alphainvestcomp", alphainvesting_result, data = in_data)
+  
+  #### Batch PRDS ####
+  BatchPRDS_result <- callModule(BatchPRDSServer, id = "inputBatchPRDS", data = in_data)
+  callModule(BatchPRDScountServer, "BatchPRDScount", BatchPRDS_result)
+  callModule(BatchPRDSplotServer, "BatchPRDSplot", BatchPRDS_result)
 
+  #### Batch BH ####
+  BatchBH_result <- callModule(BatchBHServer, id = "inputBatchBH", data = in_data)
+  callModule(BatchBHcountServer, "BatchBHcount", BatchBH_result)
+  callModule(BatchBHplotServer, "BatchBHplot", BatchBH_result)
+  
+  #### Batch StBH ####
+  BatchStBH_result <- callModule(BatchStBHServer, id = "inputBatchStBH", data = in_data)
+  callModule(BatchStBHcountServer, "BatchStBHcount", BatchStBH_result)
+  callModule(BatchStBHplotServer, "BatchStBHplot", BatchStBH_result)
+  
 }

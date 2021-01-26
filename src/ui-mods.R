@@ -557,6 +557,22 @@ plot2UI <- function(id) {
   )
 }
 
+batchplotUI <- function(id) {
+    ns <- NS(id)
+    
+    tagList(
+      plotlyOutput(ns("bplot1")) %>%
+        shinycssloaders::withSpinner(type = 6,
+                                     color = "#0066CC"),
+      br(),     
+      plotlyOutput(ns("bplot2")) %>%
+        shinycssloaders::withSpinner(type = 6,
+                                     color = "#0066CC"),
+      br(),
+      uiOutput(ns("bnum"))
+    )
+}
+
 set_html_breaks <- function(n) {
   HTML(strrep(br(), n))
 }

@@ -13,7 +13,7 @@ fluidPage(
       bs_append(title = "Introduction", content = p("This application is designed to allow users to interactively run procedures that control the False Discovery Rate (FDR) for online hypothesis testing. Source code and additional information for this application are available via", a(href = "https://github.com/dsrobertson/onlineFDR", target = "_blank", rel = "noopener noreferrer", "our GitHub"))) %>%
       bs_append(title = "False Discovery Rate vs. Family-wise Error Rate", content = p("FDR is the expected proportion of false rejections out of all rejections. FWER is the probability of making any Type I errors at all. Controlling the FWER is generally more conservative than controlling the FDR. Note that in the case when all null hypotheses are true, the FDR and FWER are the same. For the FWER Explore app, click", a(href = "https://mrc-bsu.shinyapps.io/onlineFWERExplore", target = "_blank", rel = "noopener noreferrer", "here."))) %>%
       bs_append(title = "Which algorithm do I use?", content = p(
-        "In general, there are two 'flavors' your data could come in: fully sequential and batch. This app provides algorithms that control the FDR for both flavors. For guidance on understanding which 'flavor', check out our ", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html#which-function-do-i-use-", target = "_blank", rel = "noopener noreferrer", "flowchart."), 
+        "In general, there are two 'flavors' your data could come in: fully sequential and batch. This app provides algorithms that control the FDR for both flavors. For guidance on understanding which 'flavor', check out our ", a(href = "https://dsrobertson.github.io/onlineFDR/onlineFDR-diagram.html", target = "_blank", rel = "noopener noreferrer", "flowchart."), 
         br(),
         br(),
         "This app also provides a helper tool that indicates which algorithm is more powerful across different parameters based on simulated data and a helper tool that indicates how your data should be formatted.", 
@@ -53,7 +53,7 @@ fluidPage(
         h1("Which fully sequential algorithm do I use?"),
         p("The following tool is designed to help inform which algorithm is most appropriate to use and is based on simulated data in ideal conditions. Please note that in your real-world data, you never know the number of non-null hypotheses, and thus, this tool is meant to be exploratory rather than definitive. Given your specified parameters, this tool will report which algorithm has the highest power given."),
         br(),
-        p("For more information, please use the", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html#which-function-do-i-use-", target = "_blank", rel = "noopener noreferrer", "flowchart"), "to help determine which algorithm to use."),
+        p("For more information, please use the", a(href = "https://https://dsrobertson.github.io/onlineFDR/onlineFDR-diagram.html", target = "_blank", rel = "noopener noreferrer", "flowchart"), "to help determine which algorithm to use."),
         br(),
         br(),
         column(3,
