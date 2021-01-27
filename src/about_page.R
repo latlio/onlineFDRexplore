@@ -71,7 +71,7 @@ fluidPage(
         br(),
         "shinydashboardPlus",
         br(),
-        "cicerone"
+        "cicerone",
         br(),
         "DT",
         br(),
