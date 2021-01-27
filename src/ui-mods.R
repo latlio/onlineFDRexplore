@@ -85,15 +85,6 @@ LONDUI <- function(id) {
       label = "Calculate", 
       style = "fill",
       color = "success"
-    ),
-    br(),
-    br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
-      style = "fill",
-      color = "primary",
-      size = "sm"
     )
   )
   # tagList(
@@ -166,11 +157,6 @@ LORDUI <- function(id) {
     shinyjs::hidden(
       div(
         id = ns("advopt"),
-        shiny::textInput(ns("w0"), "Wealth:", width = 80, value = 0.005, placeholder = ".005"),
-        shinyBS::bsTooltip(ns("w0"),
-                           "Initial wealth of the procedure",
-                           placement = "right",
-                           trigger = "hover"),
         shiny::textInput(ns("b0"), "Payout:", width = 80, value = 0.045, placeholder = ".045"),
         shinyBS::bsTooltip(ns("b0"),
                            "Payout for rejecting a hypothesis",
@@ -189,15 +175,6 @@ LORDUI <- function(id) {
       label = "Calculate", 
       style = "fill",
       color = "success"
-    ),
-    br(),
-    br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
-      style = "fill",
-      color = "primary",
-      size = "sm"
     )
   )
 }
@@ -251,11 +228,6 @@ SAFFRONUI <- function(id) {
     shinyjs::hidden(
       div(
         id = ns("advopt"),
-        shiny::textInput(ns("w0"), "Wealth:", width = 80, value = 0.005, placeholder = ".005"),
-        shinyBS::bsTooltip(ns("w0"),
-                           "Initial wealth of the procedure",
-                           placement = "right",
-                           trigger = "hover"),
         shiny::textInput(ns("lambda"), "Lambda", width = 80, value = 0.5, placeholder = ".5"),
         shinyBS::bsTooltip(ns("lambda"),
                            "Optional threshold for a candidate hypothesis",
@@ -288,15 +260,6 @@ SAFFRONUI <- function(id) {
       label = "Calculate", 
       style = "fill",
       color = "success"
-    ),
-    br(),
-    br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
-      style = "fill",
-      color = "primary",
-      size = "sm"
     )
   )
 }
@@ -336,12 +299,6 @@ ADDISUI <- function(id) {
     shinyjs::hidden(
       div(
         id = ns("advopt"),
-        shiny::textInput(ns("w0"), "Wealth:", width = 80, value = 0.00625, 
-                         placeholder = ".00625"),
-        shinyBS::bsTooltip(ns("w0"),
-                           "Initial wealth of the procedure",
-                           placement = "right",
-                           trigger = "hover"),
         shiny::textInput(ns("lambda"), "Lambda", width = 80, value = 0.5, placeholder = ".5"),
         shinyBS::bsTooltip(ns("lambda"),
                            "Optional threshold for a candidate hypothesis",
@@ -360,15 +317,6 @@ ADDISUI <- function(id) {
       label = "Calculate", 
       style = "fill",
       color = "success"
-    ),
-    br(),
-    br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
-      style = "fill",
-      color = "primary",
-      size = "sm"
     )
   )
 }
@@ -408,42 +356,11 @@ alphainvestingUI <- function(id) {
                        "Remember your number as this will let you access the same results in the future.",
                        placement = "right",
                        trigger = "hover"),
-    div(style="display: inline-block;vertical-align:top; width: 200px;",
-        strong(HTML(paste("Click for advanced options"))),
-        prettyCheckbox(ns("checkbox"),
-                       "Show me",
-                       value = FALSE,
-                       shape = "curve",
-                       fill = TRUE,
-                       animation = "pulse",
-                       icon = icon("check"),
-                       status = "info")
-    ),
-    shinyjs::hidden(
-      div(
-        id = ns("advopt"),
-        shiny::textInput(ns("w0"), "Wealth:", width = 80, value = 0.025, 
-                         placeholder = "0.025"),
-        shinyBS::bsTooltip(ns("w0"),
-                           "Initial wealth of the procedure",
-                           placement = "right",
-                           trigger = "hover")
-      ) # close div
-    ),
     shinyWidgets::actionBttn(
       inputId = ns("go"),
       label = "Calculate", 
       style = "fill",
       color = "success"
-    ),
-    br(),
-    br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
-      style = "fill",
-      color = "primary",
-      size = "sm"
     )
   )
 }
@@ -468,15 +385,6 @@ BatchUI <- function(id) {
       label = "Calculate", 
       style = "fill",
       color = "success"
-    ),
-    br(),
-    br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
-      style = "fill",
-      color = "primary",
-      size = "sm"
     )
   )
 }
