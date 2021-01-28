@@ -102,6 +102,12 @@ LONDServer <- function(input, output, session, data) {
     toggle(id = "boundtoggle", condition = input$bound)
   })
   
+  observeEvent(input$bound, {
+    if(input$bound == FALSE) {
+      updateTextInput(session, "boundnum", value = 0)
+    }
+  })
+  
   #record user params
   LONDparams <- reactive({
     params <- reactiveValuesToList(input)
@@ -152,7 +158,8 @@ LONDServer <- function(input, output, session, data) {
   })
   
   list(LONDres = LONDres,
-       LONDparams = LONDparams)
+       LONDparams = LONDparams,
+       alpha = reactive(as.numeric(input$alpha)))
 }
 LORDServer <- function(input, output, session, data) {
   ns <- session$ns
@@ -314,6 +321,12 @@ LORDServer <- function(input, output, session, data) {
     toggle(id = "boundtoggle", condition = input$bound)
   })
   
+  observeEvent(input$bound, {
+    if(input$bound == FALSE) {
+      updateTextInput(session, "boundnum", value = 0)
+    }
+  })
+  
   # remove placeholder text
   observeEvent(input$go, {
     
@@ -372,7 +385,8 @@ LORDServer <- function(input, output, session, data) {
   # })
   
   list(LORDres = LORDres,
-       LORDparams = LORDparams)
+       LORDparams = LORDparams,
+       alpha = reactive(as.numeric(input$alpha)))
 }
 SAFFRONServer <- function(input, output, session, data) {
   ns <- session$ns
@@ -500,6 +514,12 @@ SAFFRONServer <- function(input, output, session, data) {
     toggle(id = "boundtoggle", condition = input$bound)
   })
   
+  observeEvent(input$bound, {
+    if(input$bound == FALSE) {
+      updateTextInput(session, "boundnum", value = 0)
+    }
+  })
+  
   #record user params
   SAFFRONparams <- reactive({
     params <- reactiveValuesToList(input)
@@ -541,7 +561,7 @@ SAFFRONServer <- function(input, output, session, data) {
   
   list(SAFFRONres = SAFFRONres,
        SAFFRONparams = SAFFRONparams,
-              alpha = reactive(input$alpha))
+       alpha = reactive(as.numeric(input$alpha)))
 }
 ADDISServer <- function(input, output, session, data) {
   ns <- session$ns
@@ -660,6 +680,12 @@ ADDISServer <- function(input, output, session, data) {
     toggle(id = "boundtoggle", condition = input$bound)
   })
   
+  observeEvent(input$bound, {
+    if(input$bound == FALSE) {
+      updateTextInput(session, "boundnum", value = 0)
+    }
+  })
+  
   #record user params
   ADDISparams <- reactive({
     params <- reactiveValuesToList(input)
@@ -701,7 +727,7 @@ ADDISServer <- function(input, output, session, data) {
   
   list(ADDISres = ADDISres,
        ADDISparams = ADDISparams,
-              alpha = reactive(input$alpha))
+       alpha = reactive(as.numeric(input$alpha)))
 }
 
 alphainvestingServer <- function(input, output, session, data) {
@@ -812,6 +838,12 @@ alphainvestingServer <- function(input, output, session, data) {
     toggle(id = "boundtoggle", condition = input$bound)
   })
   
+  observeEvent(input$bound, {
+    if(input$bound == FALSE) {
+      updateTextInput(session, "boundnum", value = 0)
+    }
+  })
+  
   # output no data loaded error message
   observeEvent(input$go, {
     if(!is.null(data())){
@@ -825,7 +857,8 @@ alphainvestingServer <- function(input, output, session, data) {
   })
   
   list(alphainvestingres = alphainvestingres,
-       alphainvestingparams = alphainvestingparams)
+       alphainvestingparams = alphainvestingparams,
+       alpha = reactive(as.numeric(input$alpha)))
 }
 BatchPRDSServer <- function(input, output, session, data) {
   ns <- session$ns
@@ -907,7 +940,8 @@ BatchPRDSServer <- function(input, output, session, data) {
   })
   
   list(BatchPRDSres = BatchPRDSres,
-       BatchPRDSparams = BatchPRDSparams)
+       BatchPRDSparams = BatchPRDSparams,
+       alpha = reactive(as.numeric(input$alpha)))
 }
 BatchBHServer <- function(input, output, session, data) {
   ns <- session$ns
@@ -988,7 +1022,8 @@ BatchBHServer <- function(input, output, session, data) {
   })
   
   list(BatchBHres = BatchBHres,
-       BatchBHparams = BatchBHparams)
+       BatchBHparams = BatchBHparams,
+       alpha = reactive(as.numeric(input$alpha)))
 }
 BatchStBHServer <- function(input, output, session, data) {
   ns <- session$ns
@@ -1068,7 +1103,8 @@ BatchStBHServer <- function(input, output, session, data) {
   })
   
   list(BatchStBHres = BatchStBHres,
-       BatchStBHparams = BatchStBHparams)
+       BatchStBHparams = BatchStBHparams,
+       alpha = reactive(as.numeric(input$alpha)))
 }
 
 #### COUNT SERVERS ####
@@ -2168,27 +2204,30 @@ BatchStBHplotServer <- function(input, output, session, BatchStBHresult) {
 
 #### COMPARE SERVERS ####
 LONDcompServer <- function(input, output, session, LONDresult, data) {
-  select_alg <- function(alg, data) {
+  select_alg <- function(alg, data, alpha) {
     set.seed(47)
     switch(alg,
-           LOND = LOND(data),
-           LORD = LORD(data),
-           LORD3 = LORD(data, version = 3),
-           LORDdiscard = LORD(data, version = "discard"),
-           LORDdep = LORD(data, version = "dep"),
-           SAFFRON = SAFFRON(data),
-           ADDIS = ADDIS(data),
-           AlphaInvesting = Alpha_investing(data))
+           LOND = LOND(data, alpha),
+           LORD = LORD(data, alpha),
+           LORD3 = LORD(data, alpha, version = 3),
+           LORDdiscard = LORD(data, alpha, version = "discard"),
+           LORDdep = LORD(data, alpha, version = "dep"),
+           SAFFRON = SAFFRON(data, alpha),
+           ADDIS = ADDIS(data, alpha),
+           AlphaInvesting = Alpha_investing(data, alpha))
   }
   
+  select_alg_data <- eventReactive(input$compare{
+    print(as.numeric(LONDresult$alpha()))
+    out <- select_alg(alg = input$alg, data = data(),
+                      alpha = as.numeric(LONDresult$alpha()))
+  })
+  
   data_to_plot <- eventReactive(input$compare, {
+    
     current_alg_data <- LONDresult$LONDres()
     
-    select_alg_rx <- reactive({
-      out <- select_alg(alg = input$alg, data = data())
-    })
-    
-    select_alg_data <- select_alg_rx()
+    select_alg_data <- select_alg_data()
     
     data_to_plot <- cbind(current_alg_data, select_alg_data$alphai) %>%
       mutate(index = row_number(),
@@ -2218,9 +2257,6 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
     bindCache(data_to_plot() %>% slice_tail())
   
   #to make compnum reactive
-  select_alg_data <- eventReactive(input$compare, {
-    out <- select_alg(alg = input$alg, data = data())
-  })
   
   selected_alg_to_display <- eventReactive(input$compare, {
     out <- input$alg
@@ -2283,6 +2319,7 @@ LORDcompServer <- function(input, output, session, LORDresult, data) {
   }
   
   data_to_plot <- eventReactive(input$compare, {
+    
     current_alg_data <- LORDresult$LORDres()
     
     select_alg_rx <- reactive({
@@ -2385,6 +2422,9 @@ SAFFRONcompServer <- function(input, output, session, SAFFRONresult, data) {
   }
   
   data_to_plot <- eventReactive(input$compare, {
+    
+    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    
     current_alg_data <- SAFFRONresult$SAFFRONres()
     
     select_alg_rx <- reactive({
@@ -2403,6 +2443,8 @@ SAFFRONcompServer <- function(input, output, session, SAFFRONresult, data) {
       pivot_longer(cols = c(SAFFRON, !!rlang::quo_name(input$alg), Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
+    
+    shiny::removeModal()
   })
   
   output$comp <- renderPlotly({
@@ -2487,6 +2529,9 @@ ADDIScompServer <- function(input, output, session, ADDISresult, data) {
   }
   
   data_to_plot <- eventReactive(input$compare, {
+    
+    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    
     current_alg_data <- ADDISresult$ADDISres()
     
     select_alg_rx <- reactive({
@@ -2505,6 +2550,8 @@ ADDIScompServer <- function(input, output, session, ADDISresult, data) {
       pivot_longer(cols = c(ADDIS, !!rlang::quo_name(input$alg), Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
+    
+    shiny::removeModal()
   })
   
   output$comp <- renderPlotly({
@@ -2589,6 +2636,9 @@ alphainvestingcompServer <- function(input, output, session, alphainvestingresul
   }
   
   data_to_plot <- eventReactive(input$compare, {
+    
+    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    
     current_alg_data <- alphainvestingresult$alphainvestingres()
     
     select_alg_rx <- reactive({
@@ -2607,6 +2657,8 @@ alphainvestingcompServer <- function(input, output, session, alphainvestingresul
       pivot_longer(cols = c(AlphaInvesting, !!rlang::quo_name(input$alg), Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
+    
+    shiny::removeModal()
   })
   
   output$comp <- renderPlotly({
@@ -2687,6 +2739,8 @@ BatchPRDScompServer <- function(input, output, session, BatchPRDSresult, data) {
   
   data_to_plot <- eventReactive(input$batchcompare, {
     
+    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    
     select_alg_rx <- reactive({
       out <- select_alg(alg = input$batchalg, data = data())
     })
@@ -2705,6 +2759,8 @@ BatchPRDScompServer <- function(input, output, session, BatchPRDSresult, data) {
       pivot_longer(cols = c(BatchPRDS, !!rlang::quo_name(input$batchalg), Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
+    
+    shiny::removeModal()
   })
   
   output$batchcomp <- renderPlotly({
@@ -2735,6 +2791,8 @@ BatchBHcompServer <- function(input, output, session, BatchBHresult, data) {
   
   data_to_plot <- eventReactive(input$batchcompare, {
     
+    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    
     select_alg_rx <- reactive({
       out <- select_alg(alg = input$batchalg, data = data())
     })
@@ -2753,6 +2811,8 @@ BatchBHcompServer <- function(input, output, session, BatchBHresult, data) {
       pivot_longer(cols = c(BatchBH, !!rlang::quo_name(input$batchalg), Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
+    
+    shiny::removeModal()
   })
   
   output$batchcomp <- renderPlotly({
@@ -2783,6 +2843,8 @@ BatchStBHcompServer <- function(input, output, session, BatchStBHresult, data) {
   
   data_to_plot <- eventReactive(input$batchcompare, {
     
+    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    
     select_alg_rx <- reactive({
       out <- select_alg(alg = input$batchalg, data = data())
     })
@@ -2801,6 +2863,8 @@ BatchStBHcompServer <- function(input, output, session, BatchStBHresult, data) {
       pivot_longer(cols = c(BatchStBH, !!rlang::quo_name(input$batchalg), Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
+    
+    shiny::removeModal()
   })
   
   output$batchcomp <- renderPlotly({
