@@ -40,27 +40,66 @@ LONDServer <- function(input, output, session, data) {
     }, ignoreNULL = FALSE
     )
     
-    if(!is.null(data())) {
-      # shiny::showModal(modalDialog("Running algorithm..."))
-    }
+    observeEvent(input$boundnum, {
+      if(str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "boundnum",
+          text = "Value not a number",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("boundnum")
+      }
+    }, ignoreNULL = FALSE
+    )
     
-    out <- LOND(d = data(),
-                alpha = alpha,
-                random = random,
-                original = original)
+    if(!is.null(data())) {
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
+    }
+    if(input$boundnum == 0) {
+      out <- LOND(d = data(),
+                  alpha = alpha,
+                  random = random,
+                  original = original)
+    } else {
+      boundnum = as.numeric(input$boundnum)
+      betai <- setBound("LOND", N = boundnum)
+      out <- LOND(d = data(),
+                  alpha = alpha,
+                  betai = betai,
+                  random = random,
+                  original = original)
+    }
+
     shiny::removeModal()
     
     out
-  }) %>% bindCache(input$alpha, 
+  }) %>% bindCache(data() %>% slice(50),
+                   input$alpha, 
                    input$dep,
                    input$random,
                    input$original,
-                   input$seed) %>%
+                   input$seed,
+                   input$boundnum) %>%
     bindEvent(input$go)
 
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+    updateSwitchInput(session, "random", value = TRUE)
+    updateSwitchInput(session, "dep", value = FALSE)
+    updateSwitchInput(session, "original", value = TRUE)
+    updateSwitchInput(session, "bound", value = FALSE)
+    updateTextInput(session, "boundnum", value = 0)
+  })
+  
   #toggle advanced options
   observe({
     toggle(id = "advopt", condition = input$checkbox)
+  })
+  
+  observe({
+    toggle(id = "boundtoggle", condition = input$bound)
   })
   
   #record user params
@@ -208,28 +247,71 @@ LORDServer <- function(input, output, session, data) {
     }
     )
     
+    observeEvent(input$boundnum, {
+      if(str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "boundnum",
+          text = "Value not a number",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("boundnum")
+      }
+    }, ignoreNULL = FALSE
+    )
+    
     if(!is.null(data())){
-      # shiny::showModal(modalDialog("Running algorithm..."))
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
-    output <- LORD(d = data(),
-                   alpha = alpha,
-                   version = version,
-                   b0 = b0,
-                   tau.discard = tau.discard,
-                   random = random)
+    
+    if(input$boundnum == 0) {
+      out <- LORD(d = data(),
+                  alpha = alpha,
+                  version = version,
+                  b0 = b0,
+                  tau.discard = tau.discard,
+                  random = random)
+    } else {
+      boundnum = as.numeric(input$boundnum)
+      gammai <- setBound("LORD", N = boundnum)
+      out <- LORD(d = data(),
+                  alpha = alpha,
+                  gammai = gammai,
+                  version = version,
+                  b0 = b0,
+                  tau.discard = tau.discard,
+                  random = random)
+    }
     shiny::removeModal()
     
-    output
+    out
   }) %>%
-    bindCache(input$alpha, 
+    bindCache(data() %>% slice(50),
+              input$alpha, 
               input$version, 
               input$b0, 
               input$tau.discard,
-              input$random) %>%
+              input$random,
+              input$boundnum) %>%
     bindEvent(input$go)
+  
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+    updateSelectInput(session, "version", value = "++")
+    updateTextInput(session, "b0", value = 0.045)
+    updateSwitchInput(session, "random", value = TRUE)
+    updateTextInput(session, "tau.discard", value = 0.5)
+    updateSwitchInput(session, "bound", value = FALSE)
+    updateTextInput(session, "boundnum", value = 0)
+  })
   
   observe({
     toggle(id = "advopt", condition = input$checkbox)
+  })
+  
+  observe({
+    toggle(id = "boundtoggle", condition = input$bound)
   })
   
   # remove placeholder text
@@ -350,28 +432,72 @@ SAFFRONServer <- function(input, output, session, data) {
     }
     )
     
+    observeEvent(input$boundnum, {
+      if(str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "boundnum",
+          text = "Value not a number",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("boundnum")
+      }
+    }, ignoreNULL = FALSE
+    )
+    
     if(!is.null(data())){
-      # shiny::showModal(modalDialog("Running algorithm..."))
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
-    output <- SAFFRON(d = data(),
-                      alpha = alpha,
-                      lambda = lambda,
-                      random = random,
-                      discard = discard,
-                      tau.discard = tau.discard)
+
+    if(input$boundnum == 0) {
+      out <- SAFFRON(d = data(),
+                     alpha = alpha,
+                     lambda = lambda,
+                     random = random,
+                     discard = discard,
+                     tau.discard = tau.discard)
+    } else {
+      boundnum = as.numeric(input$boundnum)
+      gammai <- setBound("SAFFRON", N = boundnum)
+      out <- SAFFRON(d = data(),
+                     alpha = alpha,
+                     gammai = gammai,
+                     lambda = lambda,
+                     random = random,
+                     discard = discard,
+                     tau.discard = tau.discard)
+    }
+
     shiny::removeModal()
     
-    output
+    out
   }) %>%
-    bindCache(input$alpha,
+    bindCache(data() %>% slice(50),
+              input$alpha,
               input$lambda,
               input$random,
               input$discard,
-              input$tau.discard) %>%
+              input$tau.discard,
+              input$boundnum) %>%
     bindEvent(input$go)
+  
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+    updateTextInput(session, "lambda", value = 0.5)
+    updateSwitchInput(session, "random", value = TRUE)
+    updateSwitchInput(session, "discard", value = TRUE)
+    updateTextInput(session, "tau.discard", value = 0.5)
+    updateSwitchInput(session, "bound", value = FALSE)
+    updateTextInput(session, "boundnum", value = 0)
+  })
   
   observe({
     toggle(id = "advopt", condition = input$checkbox)
+  })
+  
+  observe({
+    toggle(id = "boundtoggle", condition = input$bound)
   })
   
   #record user params
@@ -472,25 +598,66 @@ ADDISServer <- function(input, output, session, data) {
     }
     )
     
+    observeEvent(input$boundnum, {
+      if(str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "boundnum",
+          text = "Value not a number",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("boundnum")
+      }
+    }, ignoreNULL = FALSE
+    )
+    
     if(!is.null(data())){
-      # shiny::showModal(modalDialog("Running algorithm..."))
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
-    output <- ADDIS(d = data(),
-                    alpha = alpha,
-                    lambda = lambda,
-                    tau = tau,
-                    async = FALSE)
+    if(input$boundnum == 0) {
+      out <- ADDIS(d = data(),
+                   alpha = alpha,
+                   lambda = lambda,
+                   tau = tau,
+                   async = FALSE)
+    } else {
+      boundnum = as.numeric(input$boundnum)
+      gammai <- setBound("ADDIS", N = boundnum)
+      
+      out <- ADDIS(d = data(),
+                   alpha = alpha,
+                   gammai = gammai,
+                   lambda = lambda,
+                   tau = tau,
+                   async = FALSE)
+    }
+
     shiny::removeModal()
     
-    output
+    out
   }) %>%
-    bindCache(input$alpha,
+    bindCache(data() %>% slice(50),
+              input$alpha,
               input$lambda,
-              input$tau) %>%
+              input$tau,
+              input$boundnum) %>%
     bindEvent(input$go)
+  
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+    updateTextInput(session, "lambda", value = 0.5)
+    updateTextInput(session, "tau", value = 0.5)
+    updateSwitchInput(session, "bound", value = FALSE)
+    updateTextInput(session, "boundnum", value = 0)
+  })
   
   observe({
     toggle(id = "advopt", condition = input$checkbox)
+  })
+  
+  observe({
+    toggle(id = "boundtoggle", condition = input$bound)
   })
   
   #record user params
@@ -561,19 +728,45 @@ alphainvestingServer <- function(input, output, session, data) {
     }
     )
     
+    observeEvent(input$boundnum, {
+      if(str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "boundnum",
+          text = "Value not a number",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("boundnum")
+      }
+    }, ignoreNULL = FALSE
+    )
+    
     if(!is.null(data())){
-      # shiny::showModal(modalDialog("Running algorithm..."))
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
     
-    output <- Alpha_investing(d = data(),
-                              alpha = alpha,
-                              random = random)
+    if(input$boundnum == 0) {
+      out <- Alpha_investing(d = data(),
+                             alpha = alpha,
+                             random = random)
+    } else {
+      boundnum = as.numeric(input$boundnum)
+      gammai <- setBound("Alpha_investing", N = boundnum)
+      
+      out <- Alpha_investing(d = data(),
+                             alpha = alpha,
+                             gammai = gammai,
+                             random = random)
+    }
+
     shiny::removeModal()
     
-    output
+    out
   }) %>%
-    bindCache(input$alpha,
-              input$random) %>%
+    bindCache(data() %>% slice(50),
+              input$alpha,
+              input$random,
+              input$boundnum) %>%
     bindEvent(input$go)
   
   #record user params
@@ -601,6 +794,22 @@ alphainvestingServer <- function(input, output, session, data) {
       shinyjs::show(id = "placeholder2")
     }
     
+  })
+  
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+    updateSwitchInput(session, "random", value = TRUE)
+    updateSwitchInput(session, "bound", value = FALSE)
+    updateTextInput(session, "boundnum", value = 0)
+  })
+  
+  observe({
+    toggle(id = "advopt", condition = input$checkbox)
+  })
+  
+  observe({
+    toggle(id = "boundtoggle", condition = input$bound)
   })
   
   # output no data loaded error message
@@ -643,8 +852,8 @@ BatchPRDSServer <- function(input, output, session, data) {
     }, ignoreNULL = FALSE
     )
     
-    if(!is.null(data())) {
-      # shiny::showModal(modalDialog("Running algorithm..."))
+    if(!is.null(data())){
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
     
     #cache collision?
@@ -653,7 +862,8 @@ BatchPRDSServer <- function(input, output, session, data) {
     shiny::removeModal()
     
     out
-  }) %>% bindCache(input$alpha) %>%
+  }) %>% bindCache(data() %>% slice(50), 
+                   input$alpha) %>%
     bindEvent(input$go)
   
   #record user params
@@ -723,8 +933,8 @@ BatchBHServer <- function(input, output, session, data) {
     }, ignoreNULL = FALSE
     )
     
-    if(!is.null(data())) {
-      # shiny::showModal(modalDialog("Running algorithm..."))
+    if(!is.null(data())){
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
     
     #cache collision?
@@ -733,7 +943,8 @@ BatchBHServer <- function(input, output, session, data) {
     shiny::removeModal()
     
     out
-  }) %>% bindCache(input$alpha) %>%
+  }) %>% bindCache(data() %>% slice(50),
+                   input$alpha) %>%
     bindEvent(input$go)
   
   #record user params
@@ -803,8 +1014,8 @@ BatchStBHServer <- function(input, output, session, data) {
     }, ignoreNULL = FALSE
     )
     
-    if(!is.null(data())) {
-      # shiny::showModal(modalDialog("Running algorithm..."))
+    if(!is.null(data())){
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
     
     #cache collision?
@@ -813,7 +1024,8 @@ BatchStBHServer <- function(input, output, session, data) {
     shiny::removeModal()
     
     out
-  }) %>% bindCache(input$alpha) %>%
+  }) %>% bindCache(data() %>% slice(50),
+                   input$alpha) %>%
     bindEvent(input$go)
   
   #record user params

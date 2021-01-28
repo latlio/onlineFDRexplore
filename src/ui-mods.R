@@ -78,11 +78,46 @@ LONDUI <- function(id) {
                                       onLabel = "True",
                                       offLabel = "False",
                                       width = "80px")),
-      ) #close div
-    ),
+      
+        div(style="display: inline-block;vertical-align:top; width: 200px;",
+            tags$strong(id = ns("label_bound"),
+                        "Bound:"),
+            shinyWidgets::switchInput(ns("bound"), 
+                                      NULL, 
+                                      value = FALSE,
+                                      onLabel = "True",
+                                      offLabel = "False",
+                                      width = "80px"),
+            shinyBS::bsTooltip(ns("label_bound"),
+                               "The default unbounded uses the number of p-values in your data. Setting bound to TRUE will allow you to set an upper bound for the number of hypotheses.",
+                               placement = "right",
+                               trigger = "hover")
+        ),
+      
+        shinyjs::hidden(
+          div(
+            id = ns("boundtoggle"),
+            div(style="display: inline-block;vertical-align:top; width: 200px;",
+                tags$strong("Number of hypotheses"),
+                shiny::textInput(ns("boundnum"), 
+                                 NULL,
+                                 width = 80,
+                                 value = 0))
+          )
+        )
+    ) #close div
+    ), #close hidden
     shinyWidgets::actionBttn(
       inputId = ns("go"),
       label = "Calculate", 
+      style = "fill",
+      color = "success"
+    ),
+    br(),
+    br(),
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
       color = "success"
     )
@@ -167,12 +202,47 @@ LORDUI <- function(id) {
         shinyBS::bsTooltip(ns("tau.discard"),
                            "Optional threshold for hypotheses to be selected for testing",
                            placement = "right",
-                           trigger = "hover")
+                           trigger = "hover"),
+        
+        div(style="display: inline-block;vertical-align:top; width: 200px;",
+            tags$strong(id = ns("label_bound"),
+                        "Bound:"),
+            shinyWidgets::switchInput(ns("bound"), 
+                                      NULL, 
+                                      value = FALSE,
+                                      onLabel = "True",
+                                      offLabel = "False",
+                                      width = "80px"),
+            shinyBS::bsTooltip(ns("label_bound"),
+                               "The default unbounded uses the number of p-values in your data. Setting bound to TRUE will allow you to set an upper bound for the number of hypotheses.",
+                               placement = "right",
+                               trigger = "hover")
+        ),
+        
+        shinyjs::hidden(
+          div(
+            id = ns("boundtoggle"),
+            div(style="display: inline-block;vertical-align:top; width: 200px;",
+                tags$strong("Number of hypotheses"),
+                shiny::textInput(ns("boundnum"), 
+                                 NULL,
+                                 width = 80,
+                                 value = 0))
+          )
+        )
       ) #close div
     ),
     shinyWidgets::actionBttn(
       inputId = ns("go"),
       label = "Calculate", 
+      style = "fill",
+      color = "success"
+    ),
+    br(),
+    br(),
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
       color = "success"
     )
@@ -252,12 +322,47 @@ SAFFRONUI <- function(id) {
         shinyBS::bsTooltip(ns("tau.discard"),
                            "Optional threshold for hypotheses to be selected for testing",
                            placement = "right",
-                           trigger = "hover")
+                           trigger = "hover"),
+        
+        div(style="display: inline-block;vertical-align:top; width: 200px;",
+            tags$strong(id = ns("label_bound"),
+                        "Bound:"),
+            shinyWidgets::switchInput(ns("bound"), 
+                                      NULL, 
+                                      value = FALSE,
+                                      onLabel = "True",
+                                      offLabel = "False",
+                                      width = "80px"),
+            shinyBS::bsTooltip(ns("label_bound"),
+                               "The default unbounded uses the number of p-values in your data. Setting bound to TRUE will allow you to set an upper bound for the number of hypotheses.",
+                               placement = "right",
+                               trigger = "hover")
+        ),
+        
+        shinyjs::hidden(
+          div(
+            id = ns("boundtoggle"),
+            div(style="display: inline-block;vertical-align:top; width: 200px;",
+                tags$strong("Number of hypotheses"),
+                shiny::textInput(ns("boundnum"), 
+                                 NULL,
+                                 width = 80,
+                                 value = 0))
+          )
+        )
       ) #close div
     ),
     shinyWidgets::actionBttn(
       inputId = ns("go"),
       label = "Calculate", 
+      style = "fill",
+      color = "success"
+    ),
+    br(),
+    br(),
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
       color = "success"
     )
@@ -309,12 +414,47 @@ ADDISUI <- function(id) {
         shinyBS::bsTooltip(ns("tau"),
                            "Optional threshold for hypotheses to be selected for testing",
                            placement = "right",
-                           trigger = "hover")
+                           trigger = "hover"),
+        
+        div(style="display: inline-block;vertical-align:top; width: 200px;",
+            tags$strong(id = ns("label_bound"),
+                        "Bound:"),
+            shinyWidgets::switchInput(ns("bound"), 
+                                      NULL, 
+                                      value = FALSE,
+                                      onLabel = "True",
+                                      offLabel = "False",
+                                      width = "80px"),
+            shinyBS::bsTooltip(ns("label_bound"),
+                               "The default unbounded uses the number of p-values in your data. Setting bound to TRUE will allow you to set an upper bound for the number of hypotheses.",
+                               placement = "right",
+                               trigger = "hover")
+        ),
+        
+        shinyjs::hidden(
+          div(
+            id = ns("boundtoggle"),
+            div(style="display: inline-block;vertical-align:top; width: 200px;",
+                tags$strong("Number of hypotheses"),
+                shiny::textInput(ns("boundnum"), 
+                                 NULL,
+                                 width = 80,
+                                 value = 0))
+          )
+        )
       ) # close div
     ),
     shinyWidgets::actionBttn(
       inputId = ns("go"),
       label = "Calculate", 
+      style = "fill",
+      color = "success"
+    ),
+    br(),
+    br(),
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
       color = "success"
     )
@@ -356,9 +496,60 @@ alphainvestingUI <- function(id) {
                        "Remember your number as this will let you access the same results in the future.",
                        placement = "right",
                        trigger = "hover"),
+    div(style="display: inline-block;vertical-align:top; width: 200px;",
+        strong(HTML(paste("Click for advanced options"))),
+        prettyCheckbox(ns("checkbox"),
+                       "Show me",
+                       value = FALSE,
+                       shape = "curve",
+                       fill = TRUE,
+                       animation = "pulse",
+                       icon = icon("check"),
+                       status = "info")
+    ),
+    shinyjs::hidden(
+      div(
+        id = ns("advopt"),
+        
+        div(style="display: inline-block;vertical-align:top; width: 200px;",
+            tags$strong(id = ns("label_bound"),
+                        "Bound:"),
+            shinyWidgets::switchInput(ns("bound"), 
+                                      NULL, 
+                                      value = FALSE,
+                                      onLabel = "True",
+                                      offLabel = "False",
+                                      width = "80px"),
+            shinyBS::bsTooltip(ns("label_bound"),
+                               "The default unbounded uses the number of p-values in your data. Setting bound to TRUE will allow you to set an upper bound for the number of hypotheses.",
+                               placement = "right",
+                               trigger = "hover")
+        ),
+        
+        shinyjs::hidden(
+          div(
+            id = ns("boundtoggle"),
+            div(style="display: inline-block;vertical-align:top; width: 200px;",
+                tags$strong("Number of hypotheses"),
+                shiny::textInput(ns("boundnum"), 
+                                 NULL,
+                                 width = 80,
+                                 value = 0))
+          )
+        )
+      ) # close div
+    ),
     shinyWidgets::actionBttn(
       inputId = ns("go"),
       label = "Calculate", 
+      style = "fill",
+      color = "success"
+    ),
+    br(),
+    br(),
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
       color = "success"
     )
@@ -383,6 +574,14 @@ BatchUI <- function(id) {
     shinyWidgets::actionBttn(
       inputId = ns("go"),
       label = "Calculate", 
+      style = "fill",
+      color = "success"
+    ),
+    br(),
+    br(),
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
       color = "success"
     )
