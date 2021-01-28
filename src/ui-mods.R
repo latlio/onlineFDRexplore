@@ -78,8 +78,35 @@ LONDUI <- function(id) {
                                       onLabel = "True",
                                       offLabel = "False",
                                       width = "80px")),
-      ) #close div
-    ),
+      
+        div(style="display: inline-block;vertical-align:top; width: 200px;",
+            tags$strong(id = ns("label_bound"),
+                        "Bound:"),
+            shinyWidgets::switchInput(ns("bound"), 
+                                      NULL, 
+                                      value = FALSE,
+                                      onLabel = "True",
+                                      offLabel = "False",
+                                      width = "80px"),
+            shinyBS::bsTooltip(ns("label_bound"),
+                               "The default unbounded uses the number of p-values in your data. Setting bound to TRUE will allow you to set an upper bound for the number of hypotheses.",
+                               placement = "right",
+                               trigger = "hover")
+        ),
+      
+        shinyjs::hidden(
+          div(
+            id = ns("boundtoggle"),
+            div(style="display: inline-block;vertical-align:top; width: 200px;",
+                tags$strong("Number of hypotheses"),
+                shiny::textInput(ns("boundnum"), 
+                                 NULL,
+                                 width = 80,
+                                 value = 0))
+          )
+        )
+    ) #close div
+    ), #close hidden
     shinyWidgets::actionBttn(
       inputId = ns("go"),
       label = "Calculate", 
@@ -88,12 +115,11 @@ LONDUI <- function(id) {
     ),
     br(),
     br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
-      color = "primary",
-      size = "sm"
+      color = "success"
     )
   )
   # tagList(
@@ -166,11 +192,6 @@ LORDUI <- function(id) {
     shinyjs::hidden(
       div(
         id = ns("advopt"),
-        shiny::textInput(ns("w0"), "Wealth:", width = 80, value = 0.005, placeholder = ".005"),
-        shinyBS::bsTooltip(ns("w0"),
-                           "Initial wealth of the procedure",
-                           placement = "right",
-                           trigger = "hover"),
         shiny::textInput(ns("b0"), "Payout:", width = 80, value = 0.045, placeholder = ".045"),
         shinyBS::bsTooltip(ns("b0"),
                            "Payout for rejecting a hypothesis",
@@ -181,7 +202,34 @@ LORDUI <- function(id) {
         shinyBS::bsTooltip(ns("tau.discard"),
                            "Optional threshold for hypotheses to be selected for testing",
                            placement = "right",
-                           trigger = "hover")
+                           trigger = "hover"),
+        
+        div(style="display: inline-block;vertical-align:top; width: 200px;",
+            tags$strong(id = ns("label_bound"),
+                        "Bound:"),
+            shinyWidgets::switchInput(ns("bound"), 
+                                      NULL, 
+                                      value = FALSE,
+                                      onLabel = "True",
+                                      offLabel = "False",
+                                      width = "80px"),
+            shinyBS::bsTooltip(ns("label_bound"),
+                               "The default unbounded uses the number of p-values in your data. Setting bound to TRUE will allow you to set an upper bound for the number of hypotheses.",
+                               placement = "right",
+                               trigger = "hover")
+        ),
+        
+        shinyjs::hidden(
+          div(
+            id = ns("boundtoggle"),
+            div(style="display: inline-block;vertical-align:top; width: 200px;",
+                tags$strong("Number of hypotheses"),
+                shiny::textInput(ns("boundnum"), 
+                                 NULL,
+                                 width = 80,
+                                 value = 0))
+          )
+        )
       ) #close div
     ),
     shinyWidgets::actionBttn(
@@ -192,12 +240,11 @@ LORDUI <- function(id) {
     ),
     br(),
     br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
-      color = "primary",
-      size = "sm"
+      color = "success"
     )
   )
 }
@@ -251,11 +298,6 @@ SAFFRONUI <- function(id) {
     shinyjs::hidden(
       div(
         id = ns("advopt"),
-        shiny::textInput(ns("w0"), "Wealth:", width = 80, value = 0.005, placeholder = ".005"),
-        shinyBS::bsTooltip(ns("w0"),
-                           "Initial wealth of the procedure",
-                           placement = "right",
-                           trigger = "hover"),
         shiny::textInput(ns("lambda"), "Lambda", width = 80, value = 0.5, placeholder = ".5"),
         shinyBS::bsTooltip(ns("lambda"),
                            "Optional threshold for a candidate hypothesis",
@@ -280,7 +322,34 @@ SAFFRONUI <- function(id) {
         shinyBS::bsTooltip(ns("tau.discard"),
                            "Optional threshold for hypotheses to be selected for testing",
                            placement = "right",
-                           trigger = "hover")
+                           trigger = "hover"),
+        
+        div(style="display: inline-block;vertical-align:top; width: 200px;",
+            tags$strong(id = ns("label_bound"),
+                        "Bound:"),
+            shinyWidgets::switchInput(ns("bound"), 
+                                      NULL, 
+                                      value = FALSE,
+                                      onLabel = "True",
+                                      offLabel = "False",
+                                      width = "80px"),
+            shinyBS::bsTooltip(ns("label_bound"),
+                               "The default unbounded uses the number of p-values in your data. Setting bound to TRUE will allow you to set an upper bound for the number of hypotheses.",
+                               placement = "right",
+                               trigger = "hover")
+        ),
+        
+        shinyjs::hidden(
+          div(
+            id = ns("boundtoggle"),
+            div(style="display: inline-block;vertical-align:top; width: 200px;",
+                tags$strong("Number of hypotheses"),
+                shiny::textInput(ns("boundnum"), 
+                                 NULL,
+                                 width = 80,
+                                 value = 0))
+          )
+        )
       ) #close div
     ),
     shinyWidgets::actionBttn(
@@ -291,12 +360,11 @@ SAFFRONUI <- function(id) {
     ),
     br(),
     br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
-      color = "primary",
-      size = "sm"
+      color = "success"
     )
   )
 }
@@ -336,12 +404,6 @@ ADDISUI <- function(id) {
     shinyjs::hidden(
       div(
         id = ns("advopt"),
-        shiny::textInput(ns("w0"), "Wealth:", width = 80, value = 0.00625, 
-                         placeholder = ".00625"),
-        shinyBS::bsTooltip(ns("w0"),
-                           "Initial wealth of the procedure",
-                           placement = "right",
-                           trigger = "hover"),
         shiny::textInput(ns("lambda"), "Lambda", width = 80, value = 0.5, placeholder = ".5"),
         shinyBS::bsTooltip(ns("lambda"),
                            "Optional threshold for a candidate hypothesis",
@@ -352,7 +414,34 @@ ADDISUI <- function(id) {
         shinyBS::bsTooltip(ns("tau"),
                            "Optional threshold for hypotheses to be selected for testing",
                            placement = "right",
-                           trigger = "hover")
+                           trigger = "hover"),
+        
+        div(style="display: inline-block;vertical-align:top; width: 200px;",
+            tags$strong(id = ns("label_bound"),
+                        "Bound:"),
+            shinyWidgets::switchInput(ns("bound"), 
+                                      NULL, 
+                                      value = FALSE,
+                                      onLabel = "True",
+                                      offLabel = "False",
+                                      width = "80px"),
+            shinyBS::bsTooltip(ns("label_bound"),
+                               "The default unbounded uses the number of p-values in your data. Setting bound to TRUE will allow you to set an upper bound for the number of hypotheses.",
+                               placement = "right",
+                               trigger = "hover")
+        ),
+        
+        shinyjs::hidden(
+          div(
+            id = ns("boundtoggle"),
+            div(style="display: inline-block;vertical-align:top; width: 200px;",
+                tags$strong("Number of hypotheses"),
+                shiny::textInput(ns("boundnum"), 
+                                 NULL,
+                                 width = 80,
+                                 value = 0))
+          )
+        )
       ) # close div
     ),
     shinyWidgets::actionBttn(
@@ -363,12 +452,11 @@ ADDISUI <- function(id) {
     ),
     br(),
     br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
-      color = "primary",
-      size = "sm"
+      color = "success"
     )
   )
 }
@@ -422,12 +510,33 @@ alphainvestingUI <- function(id) {
     shinyjs::hidden(
       div(
         id = ns("advopt"),
-        shiny::textInput(ns("w0"), "Wealth:", width = 80, value = 0.025, 
-                         placeholder = "0.025"),
-        shinyBS::bsTooltip(ns("w0"),
-                           "Initial wealth of the procedure",
-                           placement = "right",
-                           trigger = "hover")
+        
+        div(style="display: inline-block;vertical-align:top; width: 200px;",
+            tags$strong(id = ns("label_bound"),
+                        "Bound:"),
+            shinyWidgets::switchInput(ns("bound"), 
+                                      NULL, 
+                                      value = FALSE,
+                                      onLabel = "True",
+                                      offLabel = "False",
+                                      width = "80px"),
+            shinyBS::bsTooltip(ns("label_bound"),
+                               "The default unbounded uses the number of p-values in your data. Setting bound to TRUE will allow you to set an upper bound for the number of hypotheses.",
+                               placement = "right",
+                               trigger = "hover")
+        ),
+        
+        shinyjs::hidden(
+          div(
+            id = ns("boundtoggle"),
+            div(style="display: inline-block;vertical-align:top; width: 200px;",
+                tags$strong("Number of hypotheses"),
+                shiny::textInput(ns("boundnum"), 
+                                 NULL,
+                                 width = 80,
+                                 value = 0))
+          )
+        )
       ) # close div
     ),
     shinyWidgets::actionBttn(
@@ -438,12 +547,11 @@ alphainvestingUI <- function(id) {
     ),
     br(),
     br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
-      color = "primary",
-      size = "sm"
+      color = "success"
     )
   )
 }
@@ -471,12 +579,11 @@ BatchUI <- function(id) {
     ),
     br(),
     br(),
-    shinyWidgets::downloadBttn(
-      outputId = ns("download2"),
-      label = "Download inputs",
+    shinyWidgets::actionBttn(
+      inputId = ns("reset"),
+      label = "Reset Inputs",
       style = "fill",
-      color = "primary",
-      size = "sm"
+      color = "success"
     )
   )
 }

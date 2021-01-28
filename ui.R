@@ -44,7 +44,7 @@ ui <- shiny::fluidPage(
                                                         source("src/SAFFRON_page.R")$value), #close tabPanel
                                         shiny::tabPanel("ADDIS",
                                                         source("src/ADDIS_page.R")$value), #close tabPanel
-                                        shiny::tabPanel("Alpha-investing",
+                                        shiny::tabPanel("Alpha-Investing",
                                                         source("src/Alpha_investing_page.R")$value), #close
                                         tags$style(type="text/css",
                                                    ".shiny-output-error { visibility: hidden; }",

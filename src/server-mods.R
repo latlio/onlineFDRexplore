@@ -40,38 +40,76 @@ LONDServer <- function(input, output, session, data) {
     }, ignoreNULL = FALSE
     )
     
-    if(!is.null(data())) {
-      # shiny::showModal(modalDialog("Running algorithm..."))
-    }
+    observeEvent(input$boundnum, {
+      if(str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "boundnum",
+          text = "Value not a number",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("boundnum")
+      }
+    }, ignoreNULL = FALSE
+    )
     
-    out <- LOND(d = data(),
-                alpha = alpha,
-                random = random,
-                original = original)
+    if(!is.null(data())) {
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
+    }
+    if(input$boundnum == 0) {
+      out <- LOND(d = data(),
+                  alpha = alpha,
+                  random = random,
+                  original = original)
+    } else {
+      boundnum = as.numeric(input$boundnum)
+      betai <- setBound("LOND", N = boundnum)
+      out <- LOND(d = data(),
+                  alpha = alpha,
+                  betai = betai,
+                  random = random,
+                  original = original)
+    }
+
     shiny::removeModal()
     
     out
-  }) %>% bindCache(input$alpha, 
+  }) %>% bindCache(data() %>% slice(50),
+                   input$alpha, 
                    input$dep,
                    input$random,
                    input$original,
-                   input$seed) %>%
+                   input$seed,
+                   input$boundnum) %>%
     bindEvent(input$go)
 
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+    updateSwitchInput(session, "random", value = TRUE)
+    updateSwitchInput(session, "dep", value = FALSE)
+    updateSwitchInput(session, "original", value = TRUE)
+    updateSwitchInput(session, "bound", value = FALSE)
+    updateTextInput(session, "boundnum", value = 0)
+  })
+  
   #toggle advanced options
   observe({
     toggle(id = "advopt", condition = input$checkbox)
   })
   
+  observe({
+    toggle(id = "boundtoggle", condition = input$bound)
+  })
+  
   #record user params
-  user_params <- reactive({
+  LONDparams <- reactive({
     params <- reactiveValuesToList(input)
     data.frame(
       param = names(params),
       value = unlist(params, use.names = FALSE)
     ) %>%
-      filter(param != "go",
-             param != "download2_bttn")
+      filter(param != "go")
   })
   
   # remove placeholder text
@@ -113,58 +151,43 @@ LONDServer <- function(input, output, session, data) {
     }
   })
   
-  #download params
-  output$download2 <- downloadHandler(
-    filename = function() {
-      paste("LONDparams-", Sys.Date(), ".csv", sep = "")
-    },
-    content = function(file) {
-      write_csv(user_params(), file)
-    }
-  )
-  
-  list(LONDres = LONDres)
+  list(LONDres = LONDres,
+       LONDparams = LONDparams)
 }
 LORDServer <- function(input, output, session, data) {
   ns <- session$ns
   
   observeEvent(input$version, {
     if(input$version == "++"){
-      shinyjs::disable(id = "w0")
       shinyjs::disable(id = "b0")
       shinyjs::disable(id = "tau.discard")
     }
     else if(input$version == "3" || input$version == 3) {
-      shinyjs::enable(id = "w0")
       shinyjs::enable(id = "b0")
       shinyjs::disable(id = "tau.discard")
     }
     else if(input$version == "discard"){
-      shinyjs::enable(id = "w0")
       shinyjs::enable(id = "tau.discard")
       shinyjs::disable(id = "b0")
     }
     else if(input$version == "dep"){
-      shinyjs::enable(id = "w0")
       shinyjs::enable(id = "b0")
       shinyjs::disable(id = "tau.discard")
     }
     else{
-      shinyjs::enable(id = "w0")
       shinyjs::enable(id = "b0")
       shinyjs::enable(id = "tau.discard")
     }
   })
   
   #record user params
-  user_params <- reactive({
+  LORDparams <- reactive({
     params <- reactiveValuesToList(input)
     data.frame(
       param = names(params),
       value = unlist(params, use.names = FALSE)
     ) %>%
-      filter(param != "go",
-             param != "download2_bttn")
+      filter(param != "go")
   })
   
   # Run LORD algorithm
@@ -172,7 +195,6 @@ LORDServer <- function(input, output, session, data) {
     #check parameters
     alpha = as.numeric(input$alpha)
     version = as.character(input$version)
-    w0 = as.numeric(input$w0)
     b0 = as.numeric(input$b0)
     tau.discard = as.numeric(input$tau.discard)
     random = ifelse(input$random == "True", T, F)
@@ -193,25 +215,10 @@ LORDServer <- function(input, output, session, data) {
     }
     )
     
-    observeEvent(input$w0, {
-      req(input$w0)
-      if(as.numeric(input$w0) < 0 | as.numeric(input$w0) > as.numeric(input$alpha) |
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
-        showFeedbackDanger(
-          inputId = "w0",
-          text = "Value must be non-negative and not greater than alpha",
-          icon = NULL
-        )
-      } else {
-        hideFeedback("w0")
-      }
-    }
-    )
-    
     observeEvent(input$b0, {
       req(input$b0)
       if(as.numeric(input$b0) <= 0 | as.numeric(input$b0) > 
-         as.numeric(input$alpha) - as.numeric(input$w0) |
+         as.numeric(input$alpha) - 0.005 |
          str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "b0",
@@ -240,30 +247,71 @@ LORDServer <- function(input, output, session, data) {
     }
     )
     
+    observeEvent(input$boundnum, {
+      if(str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "boundnum",
+          text = "Value not a number",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("boundnum")
+      }
+    }, ignoreNULL = FALSE
+    )
+    
     if(!is.null(data())){
-      # shiny::showModal(modalDialog("Running algorithm..."))
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
-    output <- LORD(d = data(),
-                   alpha = alpha,
-                   version = version,
-                   w0 = w0,
-                   b0 = b0,
-                   tau.discard = tau.discard,
-                   random = random)
+    
+    if(input$boundnum == 0) {
+      out <- LORD(d = data(),
+                  alpha = alpha,
+                  version = version,
+                  b0 = b0,
+                  tau.discard = tau.discard,
+                  random = random)
+    } else {
+      boundnum = as.numeric(input$boundnum)
+      gammai <- setBound("LORD", N = boundnum)
+      out <- LORD(d = data(),
+                  alpha = alpha,
+                  gammai = gammai,
+                  version = version,
+                  b0 = b0,
+                  tau.discard = tau.discard,
+                  random = random)
+    }
     shiny::removeModal()
     
-    output
+    out
   }) %>%
-    bindCache(input$alpha, 
+    bindCache(data() %>% slice(50),
+              input$alpha, 
               input$version, 
-              input$w0, 
               input$b0, 
               input$tau.discard,
-              input$random) %>%
+              input$random,
+              input$boundnum) %>%
     bindEvent(input$go)
+  
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+    updateSelectInput(session, "version", value = "++")
+    updateTextInput(session, "b0", value = 0.045)
+    updateSwitchInput(session, "random", value = TRUE)
+    updateTextInput(session, "tau.discard", value = 0.5)
+    updateSwitchInput(session, "bound", value = FALSE)
+    updateTextInput(session, "boundnum", value = 0)
+  })
   
   observe({
     toggle(id = "advopt", condition = input$checkbox)
+  })
+  
+  observe({
+    toggle(id = "boundtoggle", condition = input$bound)
   })
   
   # remove placeholder text
@@ -323,17 +371,8 @@ LORDServer <- function(input, output, session, data) {
   #   }
   # })
   
-  #download params
-  output$download2 <- downloadHandler(
-    filename = function() {
-      paste("LORDparams-", Sys.Date(), ".csv", sep = "")
-    },
-    content = function(file) {
-      write_csv(user_params(), file)
-    }
-  )
-  
-  list(LORDres = LORDres)
+  list(LORDres = LORDres,
+       LORDparams = LORDparams)
 }
 SAFFRONServer <- function(input, output, session, data) {
   ns <- session$ns
@@ -342,7 +381,6 @@ SAFFRONServer <- function(input, output, session, data) {
     
     #check parameters
     alpha = as.numeric(input$alpha)
-    w0 = as.numeric(input$w0)
     lambda = as.numeric(input$lambda)
     random = ifelse(input$random == "True", T, F)
     discard = ifelse(input$discard == "True", T, F)
@@ -360,21 +398,6 @@ SAFFRONServer <- function(input, output, session, data) {
         )
       } else {
         hideFeedback("alpha")
-      }
-    }
-    )
-    
-    observeEvent(input$w0, {
-      req(input$w0)
-      if(as.numeric(input$w0) < 0 | as.numeric(input$w0) > as.numeric(input$alpha) |
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
-        showFeedbackDanger(
-          inputId = "w0",
-          text = "Value must be non-negative and not greater than alpha",
-          icon = NULL
-        )
-      } else {
-        hideFeedback("w0")
       }
     }
     )
@@ -409,41 +432,82 @@ SAFFRONServer <- function(input, output, session, data) {
     }
     )
     
+    observeEvent(input$boundnum, {
+      if(str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "boundnum",
+          text = "Value not a number",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("boundnum")
+      }
+    }, ignoreNULL = FALSE
+    )
+    
     if(!is.null(data())){
-      # shiny::showModal(modalDialog("Running algorithm..."))
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
-    output <- SAFFRON(d = data(),
-                      alpha = alpha,
-                      w0 = w0,
-                      lambda = lambda,
-                      random = random,
-                      discard = discard,
-                      tau.discard = tau.discard)
+
+    if(input$boundnum == 0) {
+      out <- SAFFRON(d = data(),
+                     alpha = alpha,
+                     lambda = lambda,
+                     random = random,
+                     discard = discard,
+                     tau.discard = tau.discard)
+    } else {
+      boundnum = as.numeric(input$boundnum)
+      gammai <- setBound("SAFFRON", N = boundnum)
+      out <- SAFFRON(d = data(),
+                     alpha = alpha,
+                     gammai = gammai,
+                     lambda = lambda,
+                     random = random,
+                     discard = discard,
+                     tau.discard = tau.discard)
+    }
+
     shiny::removeModal()
     
-    output
+    out
   }) %>%
-    bindCache(input$alpha,
-              input$w0,
+    bindCache(data() %>% slice(50),
+              input$alpha,
               input$lambda,
               input$random,
               input$discard,
-              input$tau.discard) %>%
+              input$tau.discard,
+              input$boundnum) %>%
     bindEvent(input$go)
+  
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+    updateTextInput(session, "lambda", value = 0.5)
+    updateSwitchInput(session, "random", value = TRUE)
+    updateSwitchInput(session, "discard", value = TRUE)
+    updateTextInput(session, "tau.discard", value = 0.5)
+    updateSwitchInput(session, "bound", value = FALSE)
+    updateTextInput(session, "boundnum", value = 0)
+  })
   
   observe({
     toggle(id = "advopt", condition = input$checkbox)
   })
   
+  observe({
+    toggle(id = "boundtoggle", condition = input$bound)
+  })
+  
   #record user params
-  user_params <- reactive({
+  SAFFRONparams <- reactive({
     params <- reactiveValuesToList(input)
     data.frame(
       param = names(params),
       value = unlist(params, use.names = FALSE)
     ) %>%
-      filter(param != "go",
-             param != "download2_bttn")
+      filter(param != "go")
   })
   
   # remove placeholder text
@@ -475,38 +539,8 @@ SAFFRONServer <- function(input, output, session, data) {
     }
   })
   
-  #provide download functionality
-  # global <- reactiveValues(response = FALSE)
-  # 
-  # observeEvent(input$init, {
-  #   shinyalert::shinyalert("Confirmation",
-  #                          "Do you want to download the data?",
-  #                          type = "success",
-  #                          callbackR = function(x) {
-  #                            global$response <- x
-  #                          },
-  #                          showCancelButton = TRUE
-  #   )
-  # })
-  # 
-  # observeEvent(global$response, {
-  #   if(global$response){
-  #     shinyjs::runjs("document.getElementById('download').click();")
-  #     global$response <- FALSE
-  #   }
-  # })
-  
-  #download params
-  output$download2 <- downloadHandler(
-    filename = function() {
-      paste("SAFFRONparams-", Sys.Date(), ".csv", sep = "")
-    },
-    content = function(file) {
-      write_csv(user_params(), file)
-    }
-  )
-  
   list(SAFFRONres = SAFFRONres,
+       SAFFRONparams = SAFFRONparams,
               alpha = reactive(input$alpha))
 }
 ADDISServer <- function(input, output, session, data) {
@@ -516,7 +550,6 @@ ADDISServer <- function(input, output, session, data) {
     
     #check parameters
     alpha = as.numeric(input$alpha)
-    w0 = as.numeric(input$w0)
     lambda = as.numeric(input$lambda)
     tau = as.numeric(input$tau)
     
@@ -531,21 +564,6 @@ ADDISServer <- function(input, output, session, data) {
         )
       } else {
         hideFeedback("alpha")
-      }
-    }
-    )
-    
-    observeEvent(input$w0, {
-      req(input$w0)
-      if(as.numeric(input$w0) < 0 | as.numeric(input$w0) > as.numeric(input$alpha) |
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
-        showFeedbackDanger(
-          inputId = "w0",
-          text = "Value must be non-negative and not greater than alpha",
-          icon = NULL
-        )
-      } else {
-        hideFeedback("w0")
       }
     }
     )
@@ -580,38 +598,76 @@ ADDISServer <- function(input, output, session, data) {
     }
     )
     
+    observeEvent(input$boundnum, {
+      if(str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
+        showFeedbackDanger(
+          inputId = "boundnum",
+          text = "Value not a number",
+          icon = NULL
+        )
+      } else {
+        hideFeedback("boundnum")
+      }
+    }, ignoreNULL = FALSE
+    )
+    
     if(!is.null(data())){
-      # shiny::showModal(modalDialog("Running algorithm..."))
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
-    output <- ADDIS(d = data(),
-                    alpha = alpha,
-                    w0 = w0,
-                    lambda = lambda,
-                    tau = tau,
-                    async = FALSE)
+    if(input$boundnum == 0) {
+      out <- ADDIS(d = data(),
+                   alpha = alpha,
+                   lambda = lambda,
+                   tau = tau,
+                   async = FALSE)
+    } else {
+      boundnum = as.numeric(input$boundnum)
+      gammai <- setBound("ADDIS", N = boundnum)
+      
+      out <- ADDIS(d = data(),
+                   alpha = alpha,
+                   gammai = gammai,
+                   lambda = lambda,
+                   tau = tau,
+                   async = FALSE)
+    }
+
     shiny::removeModal()
     
-    output
+    out
   }) %>%
-    bindCache(input$alpha,
-              input$w0,
+    bindCache(data() %>% slice(50),
+              input$alpha,
               input$lambda,
-              input$tau) %>%
+              input$tau,
+              input$boundnum) %>%
     bindEvent(input$go)
+  
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+    updateTextInput(session, "lambda", value = 0.5)
+    updateTextInput(session, "tau", value = 0.5)
+    updateSwitchInput(session, "bound", value = FALSE)
+    updateTextInput(session, "boundnum", value = 0)
+  })
   
   observe({
     toggle(id = "advopt", condition = input$checkbox)
   })
   
+  observe({
+    toggle(id = "boundtoggle", condition = input$bound)
+  })
+  
   #record user params
-  user_params <- reactive({
+  ADDISparams <- reactive({
     params <- reactiveValuesToList(input)
     data.frame(
       param = names(params),
       value = unlist(params, use.names = FALSE)
     ) %>%
-      filter(param != "go",
-             param != "download2_bttn")
+      filter(param != "go")
   })
   
   # remove placeholder text
@@ -643,38 +699,8 @@ ADDISServer <- function(input, output, session, data) {
     }
   })
   
-  #provide download functionality
-  # global <- reactiveValues(response = FALSE)
-  # 
-  # observeEvent(input$init, {
-  #   shinyalert::shinyalert("Confirmation",
-  #                          "Do you want to download the data?",
-  #                          type = "success",
-  #                          callbackR = function(x) {
-  #                            global$response <- x
-  #                          },
-  #                          showCancelButton = TRUE
-  #   )
-  # })
-  # 
-  # observeEvent(global$response, {
-  #   if(global$response){
-  #     shinyjs::runjs("document.getElementById('download').click();")
-  #     global$response <- FALSE
-  #   }
-  # })
-  
-  #download params
-  output$download2 <- downloadHandler(
-    filename = function() {
-      paste("ADDISparams-", Sys.Date(), ".csv", sep = "")
-    },
-    content = function(file) {
-      write_csv(user_params(), file)
-    }
-  )
-  
   list(ADDISres = ADDISres,
+       ADDISparams = ADDISparams,
               alpha = reactive(input$alpha))
 }
 
@@ -685,7 +711,6 @@ alphainvestingServer <- function(input, output, session, data) {
     
     #check parameters
     alpha = as.numeric(input$alpha)
-    w0 = as.numeric(input$w0)
     random = ifelse(input$random == "True", T, F)
     
     observeEvent(input$alpha, {
@@ -703,51 +728,55 @@ alphainvestingServer <- function(input, output, session, data) {
     }
     )
     
-    observeEvent(input$w0, {
-      req(input$w0)
-      if(as.numeric(input$w0) < 0 | as.numeric(input$w0) > as.numeric(input$alpha) |
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+    observeEvent(input$boundnum, {
+      if(str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
-          inputId = "w0",
-          text = "Value must be non-negative and not greater than alpha",
+          inputId = "boundnum",
+          text = "Value not a number",
           icon = NULL
         )
       } else {
-        hideFeedback("w0")
+        hideFeedback("boundnum")
       }
-    }
+    }, ignoreNULL = FALSE
     )
     
     if(!is.null(data())){
-      # shiny::showModal(modalDialog("Running algorithm..."))
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
     
-    output <- Alpha_investing(d = data(),
-                              alpha = alpha,
-                              w0 = w0,
-                              random = random)
+    if(input$boundnum == 0) {
+      out <- Alpha_investing(d = data(),
+                             alpha = alpha,
+                             random = random)
+    } else {
+      boundnum = as.numeric(input$boundnum)
+      gammai <- setBound("Alpha_investing", N = boundnum)
+      
+      out <- Alpha_investing(d = data(),
+                             alpha = alpha,
+                             gammai = gammai,
+                             random = random)
+    }
+
     shiny::removeModal()
     
-    output
+    out
   }) %>%
-    bindCache(input$alpha,
-              input$w0,
-              input$random) %>%
+    bindCache(data() %>% slice(50),
+              input$alpha,
+              input$random,
+              input$boundnum) %>%
     bindEvent(input$go)
   
-  observe({
-    toggle(id = "advopt", condition = input$checkbox)
-  })
-  
   #record user params
-  user_params <- reactive({
+  alphainvestingparams <- reactive({
     params <- reactiveValuesToList(input)
     data.frame(
       param = names(params),
       value = unlist(params, use.names = FALSE)
     ) %>%
-      filter(param != "go",
-             param != "download2_bttn")
+      filter(param != "go")
   })
   
   # remove placeholder text
@@ -767,6 +796,22 @@ alphainvestingServer <- function(input, output, session, data) {
     
   })
   
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+    updateSwitchInput(session, "random", value = TRUE)
+    updateSwitchInput(session, "bound", value = FALSE)
+    updateTextInput(session, "boundnum", value = 0)
+  })
+  
+  observe({
+    toggle(id = "advopt", condition = input$checkbox)
+  })
+  
+  observe({
+    toggle(id = "boundtoggle", condition = input$bound)
+  })
+  
   # output no data loaded error message
   observeEvent(input$go, {
     if(!is.null(data())){
@@ -779,23 +824,15 @@ alphainvestingServer <- function(input, output, session, data) {
     }
   })
   
-  #download params
-  output$download2 <- downloadHandler(
-    filename = function() {
-      paste("alphainvestingparams-", Sys.Date(), ".csv", sep = "")
-    },
-    content = function(file) {
-      write_csv(user_params(), file)
-    }
-  )
-  
-  list(alphainvestingres = alphainvestingres)
+  list(alphainvestingres = alphainvestingres,
+       alphainvestingparams = alphainvestingparams)
 }
 BatchPRDSServer <- function(input, output, session, data) {
   ns <- session$ns
   
   # Run BatchPRDS algorithm
   BatchPRDSres <- reactive({
+    
     #check parameters
     alpha = as.numeric(input$alpha)
     
@@ -815,8 +852,8 @@ BatchPRDSServer <- function(input, output, session, data) {
     }, ignoreNULL = FALSE
     )
     
-    if(!is.null(data())) {
-      # shiny::showModal(modalDialog("Running algorithm..."))
+    if(!is.null(data())){
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
     
     #cache collision?
@@ -825,18 +862,18 @@ BatchPRDSServer <- function(input, output, session, data) {
     shiny::removeModal()
     
     out
-  }) %>% bindCache(input$alpha) %>%
+  }) %>% bindCache(data() %>% slice(50), 
+                   input$alpha) %>%
     bindEvent(input$go)
   
   #record user params
-  user_params <- reactive({
+  BatchPRDSparams <- reactive({
     params <- reactiveValuesToList(input)
     data.frame(
       param = names(params),
       value = unlist(params, use.names = FALSE)
     ) %>%
-      filter(param != "go",
-             param != "download2_bttn")
+      filter(param != "go")
   })
   
   # remove placeholder text
@@ -869,17 +906,8 @@ BatchPRDSServer <- function(input, output, session, data) {
     }
   })
   
-  #download params
-  output$download2 <- downloadHandler(
-    filename = function() {
-      paste("BatchPRDSparams-", Sys.Date(), ".csv", sep = "")
-    },
-    content = function(file) {
-      write_csv(user_params(), file)
-    }
-  )
-  
-  list(BatchPRDSres = BatchPRDSres)
+  list(BatchPRDSres = BatchPRDSres,
+       BatchPRDSparams = BatchPRDSparams)
 }
 BatchBHServer <- function(input, output, session, data) {
   ns <- session$ns
@@ -905,8 +933,8 @@ BatchBHServer <- function(input, output, session, data) {
     }, ignoreNULL = FALSE
     )
     
-    if(!is.null(data())) {
-      # shiny::showModal(modalDialog("Running algorithm..."))
+    if(!is.null(data())){
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
     
     #cache collision?
@@ -915,18 +943,18 @@ BatchBHServer <- function(input, output, session, data) {
     shiny::removeModal()
     
     out
-  }) %>% bindCache(input$alpha) %>%
+  }) %>% bindCache(data() %>% slice(50),
+                   input$alpha) %>%
     bindEvent(input$go)
   
   #record user params
-  user_params <- reactive({
+  BatchBHparams <- reactive({
     params <- reactiveValuesToList(input)
     data.frame(
       param = names(params),
       value = unlist(params, use.names = FALSE)
     ) %>%
-      filter(param != "go",
-             param != "download2_bttn")
+      filter(param != "go")
   })
   
   # remove placeholder text
@@ -959,17 +987,8 @@ BatchBHServer <- function(input, output, session, data) {
     }
   })
   
-  #download params
-  output$download2 <- downloadHandler(
-    filename = function() {
-      paste("BatchBHparams-", Sys.Date(), ".csv", sep = "")
-    },
-    content = function(file) {
-      write_csv(user_params(), file)
-    }
-  )
-  
-  list(BatchBHres = BatchBHres)
+  list(BatchBHres = BatchBHres,
+       BatchBHparams = BatchBHparams)
 }
 BatchStBHServer <- function(input, output, session, data) {
   ns <- session$ns
@@ -995,8 +1014,8 @@ BatchStBHServer <- function(input, output, session, data) {
     }, ignoreNULL = FALSE
     )
     
-    if(!is.null(data())) {
-      # shiny::showModal(modalDialog("Running algorithm..."))
+    if(!is.null(data())){
+      shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
     
     #cache collision?
@@ -1005,18 +1024,18 @@ BatchStBHServer <- function(input, output, session, data) {
     shiny::removeModal()
     
     out
-  }) %>% bindCache(input$alpha) %>%
+  }) %>% bindCache(data() %>% slice(50),
+                   input$alpha) %>%
     bindEvent(input$go)
   
   #record user params
-  user_params <- reactive({
+  BatchStBHparams <- reactive({
     params <- reactiveValuesToList(input)
     data.frame(
       param = names(params),
       value = unlist(params, use.names = FALSE)
     ) %>%
-      filter(param != "go",
-             param != "download2_bttn")
+      filter(param != "go")
   })
   
   # remove placeholder text
@@ -1048,17 +1067,8 @@ BatchStBHServer <- function(input, output, session, data) {
     }
   })
   
-  #download params
-  output$download2 <- downloadHandler(
-    filename = function() {
-      paste("BatchStBHparams-", Sys.Date(), ".csv", sep = "")
-    },
-    content = function(file) {
-      write_csv(user_params(), file)
-    }
-  )
-  
-  list(BatchStBHres = BatchStBHres)
+  list(BatchStBHres = BatchStBHres,
+       BatchStBHparams = BatchStBHparams)
 }
 
 #### COUNT SERVERS ####
@@ -1083,7 +1093,7 @@ LONDcountServer <- function(input, output, session, LONDresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1104,7 +1114,7 @@ LONDcountServer <- function(input, output, session, LONDresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1128,9 +1138,11 @@ LONDcountServer <- function(input, output, session, LONDresult) {
       
       filename <- paste("LOND-", Sys.Date(), ".csv", sep = "")
       write_csv(LONDresult$LONDres(), filename)
+      filename2 <- paste("LONDparams-", Sys.Date(), ".csv", sep = "")
+      write_csv(LONDresult$LONDparams(), filename2)
       R_session <- paste("LOND-", Sys.Date(), "sessioninfo.txt", sep = "")
       writeLines(capture.output(sessionInfo()), R_session)
-      files <- c(filename, R_session)
+      files <- c(filename, filename2, R_session)
       zip(file, files)
     }
   )
@@ -1156,7 +1168,7 @@ LORDcountServer <- function(input, output, session, LORDresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1177,7 +1189,7 @@ LORDcountServer <- function(input, output, session, LORDresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1201,9 +1213,11 @@ LORDcountServer <- function(input, output, session, LORDresult) {
       
       filename <- paste("LORD-", Sys.Date(), ".csv", sep = "")
       write_csv(LORDresult$LORDres(), filename)
+      filename2 <- paste("LORDparams-", Sys.Date(), ".csv", sep = "")
+      write_csv(LORDresult$LORDparams(), filename2)
       R_session <- paste("LORD-", Sys.Date(), "sessioninfo.txt", sep = "")
       writeLines(capture.output(sessionInfo()), R_session)
-      files <- c(filename, R_session)
+      files <- c(filename, filename2, R_session)
       zip(file, files)
     }
   )
@@ -1229,7 +1243,7 @@ SAFFRONcountServer <- function(input, output, session, SAFFRONresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1250,7 +1264,7 @@ SAFFRONcountServer <- function(input, output, session, SAFFRONresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1274,9 +1288,11 @@ SAFFRONcountServer <- function(input, output, session, SAFFRONresult) {
       
       filename <- paste("SAFFRON-", Sys.Date(), ".csv", sep = "")
       write_csv(SAFFRONresult$SAFFRONres(), filename)
+      filename2 <- paste("SAFFRONparams-", Sys.Date(), ".csv", sep = "")
+      write_csv(SAFFRONresult$SAFFRONparams(), filename2)
       R_session <- paste("SAFFRON-", Sys.Date(), "sessioninfo.txt", sep = "")
       writeLines(capture.output(sessionInfo()), R_session)
-      files <- c(filename, R_session)
+      files <- c(filename, filename2, R_session)
       zip(file, files)
     }
   )
@@ -1302,7 +1318,7 @@ ADDIScountServer <- function(input, output, session, ADDISresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1323,7 +1339,7 @@ ADDIScountServer <- function(input, output, session, ADDISresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1347,9 +1363,11 @@ ADDIScountServer <- function(input, output, session, ADDISresult) {
       
       filename <- paste("ADDIS-", Sys.Date(), ".csv", sep = "")
       write_csv(ADDISresult$ADDISres(), filename)
+      filename2 <- paste("ADDISparams-", Sys.Date(), ".csv", sep = "")
+      write_csv(ADDISresult$ADDISparams(), filename2)
       R_session <- paste("ADDIS-", Sys.Date(), "sessioninfo.txt", sep = "")
       writeLines(capture.output(sessionInfo()), R_session)
-      files <- c(filename, R_session)
+      files <- c(filename, filename2, R_session)
       zip(file, files)
     }
   )
@@ -1375,7 +1393,7 @@ alphainvestingcountServer <- function(input, output, session, alphainvestingresu
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1396,7 +1414,7 @@ alphainvestingcountServer <- function(input, output, session, alphainvestingresu
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1420,9 +1438,11 @@ alphainvestingcountServer <- function(input, output, session, alphainvestingresu
       
       filename <- paste("alphainvesting-", Sys.Date(), ".csv", sep = "")
       write_csv(alphainvestingresult$alphainvestingres(), filename)
+      filename2 <- paste("alphainvestingparams-", Sys.Date(), ".csv", sep = "")
+      write_csv(alphainvestingresult$alphainvestingparams(), filename2)
       R_session <- paste("alphainvesting-", Sys.Date(), "sessioninfo.txt", sep = "")
       writeLines(capture.output(sessionInfo()), R_session)
-      files <- c(filename, R_session)
+      files <- c(filename, filename2, R_session)
       zip(file, files)
     }
   )
@@ -1449,7 +1469,7 @@ BatchPRDScountServer <- function(input, output, session, BatchPRDSresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1470,7 +1490,7 @@ BatchPRDScountServer <- function(input, output, session, BatchPRDSresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1494,9 +1514,11 @@ BatchPRDScountServer <- function(input, output, session, BatchPRDSresult) {
       
       filename <- paste("BatchPRDS-", Sys.Date(), ".csv", sep = "")
       write_csv(BatchPRDSresult$BatchPRDSres(), filename)
+      filename2 <- paste("BatchPRDSparams-", Sys.Date(), ".csv", sep = "")
+      write_csv(BatchPRDSresult$BatchPRDSparams(), filename2)
       R_session <- paste("BatchPRDS-", Sys.Date(), "sessioninfo.txt", sep = "")
       writeLines(capture.output(sessionInfo()), R_session)
-      files <- c(filename, R_session)
+      files <- c(filename, filename2, R_session)
       zip(file, files)
     }
   )
@@ -1523,7 +1545,7 @@ BatchBHcountServer <- function(input, output, session, BatchBHresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1544,7 +1566,7 @@ BatchBHcountServer <- function(input, output, session, BatchBHresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1568,9 +1590,11 @@ BatchBHcountServer <- function(input, output, session, BatchBHresult) {
       
       filename <- paste("BatchBH-", Sys.Date(), ".csv", sep = "")
       write_csv(BatchBHresult$BatchBHres(), filename)
+      filename2 <- paste("BatchBHparams-", Sys.Date(), ".csv", sep = "")
+      write_csv(BatchBHresult$BatchBHparams(), filename2)
       R_session <- paste("BatchBH-", Sys.Date(), "sessioninfo.txt", sep = "")
       writeLines(capture.output(sessionInfo()), R_session)
-      files <- c(filename, R_session)
+      files <- c(filename, filename2, R_session)
       zip(file, files)
     }
   )
@@ -1597,7 +1621,7 @@ BatchStBHcountServer <- function(input, output, session, BatchStBHresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1618,7 +1642,7 @@ BatchStBHcountServer <- function(input, output, session, BatchStBHresult) {
         set_html_breaks(2),
         shinyWidgets::downloadBttn(
           outputId = ns("download"),
-          label = "Download results",
+          label = "Download results & inputs",
           style = "fill",
           color = "primary",
           size = "sm"
@@ -1642,9 +1666,11 @@ BatchStBHcountServer <- function(input, output, session, BatchStBHresult) {
       
       filename <- paste("BatchStBH-", Sys.Date(), ".csv", sep = "")
       write_csv(BatchStBHresult$BatchStBHres(), filename)
+      filename2 <- paste("BatchStBHparams-", Sys.Date(), ".csv", sep = "")
+      write_csv(BatchStBHresult$BatchStBHparams(), filename2)
       R_session <- paste("BatchStBH-", Sys.Date(), "sessioninfo.txt", sep = "")
       writeLines(capture.output(sessionInfo()), R_session)
-      files <- c(filename, R_session)
+      files <- c(filename, filename2, R_session)
       zip(file, files)
     }
   )
