@@ -2217,14 +2217,14 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
            AlphaInvesting = Alpha_investing(data, alpha))
   }
   
-  select_alg_data <- eventReactive(input$compare{
+  select_alg_data <- eventReactive(input$compare, {
     print(as.numeric(LONDresult$alpha()))
     out <- select_alg(alg = input$alg, data = data(),
                       alpha = as.numeric(LONDresult$alpha()))
   })
   
   data_to_plot <- eventReactive(input$compare, {
-    
+
     current_alg_data <- LONDresult$LONDres()
     
     select_alg_data <- select_alg_data()
@@ -2239,8 +2239,13 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
                    names_to = "adjustment",
                    values_to = "alpha")
   })
+    # bindCache(LONDresult$LONDres() %>% slice_tail(),
+    #           select_alg_data() %>% slice_tail()) %>%
+    # bindEvent(input$compare)
   
   output$comp <- renderPlotly({
+    # shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 30 seconds and 1 minute..."))
+    
     if(!is.null(data_to_plot())) {
       data_to_plot <- data_to_plot()
       
@@ -2253,6 +2258,7 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
         add_lines() %>%
         layout(xaxis = ex, yaxis = why)
     }
+    # shiny::removeModal()
   }) %>%
     bindCache(data_to_plot() %>% slice_tail())
   
