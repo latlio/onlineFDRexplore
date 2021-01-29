@@ -17,23 +17,29 @@ LONDServer <- function(input, output, session, data) {
   LONDres <- reactive({
     #check parameters
     alpha = as.numeric(input$alpha)
+    req(input$alpha)
     dep = ifelse(input$dep == "True", T, F)
     random = ifelse(input$random == "True", T, F)
     original = ifelse(input$original == "True", T, F)
     seed = as.numeric(input$seed)
+    req(input$seed)
     
     set.seed(seed)
     
     #provide user feedback
     observeEvent(input$alpha, {
+      cat(file=stderr(), input$alpha, " a", "\n")
       req(input$alpha)
+      cat(file=stderr(), input$alpha, " b", "\n")
       if(as.numeric(input$alpha) > 1 | as.numeric(input$alpha) <= 0 |
          str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+        cat(file=stderr(), input$alpha, " c", "\n")
         showFeedbackDanger(
           inputId = "alpha",
           text = "Value not between 0 and 1",
           icon = NULL
         )
+        cat(file=stderr(), input$alpha, " d", "\n")
       } else {
         hideFeedback("alpha")
       }
@@ -201,10 +207,17 @@ LORDServer <- function(input, output, session, data) {
   LORDres <- reactive({
     #check parameters
     alpha = as.numeric(input$alpha)
+    req(input$alpha)
     version = as.character(input$version)
     b0 = as.numeric(input$b0)
+    rep(input$b0)
     tau.discard = as.numeric(input$tau.discard)
+    rep(input$tau.discard)
     random = ifelse(input$random == "True", T, F)
+    seed = as.numeric(input$seed)
+    req(input$seed)
+    
+    set.seed(seed)
     
     #provide user feedback
     observeEvent(input$alpha, {
@@ -219,7 +232,7 @@ LORDServer <- function(input, output, session, data) {
       } else {
         hideFeedback("alpha")
       }
-    }
+    }, ignoreNULL = FALSE
     )
     
     observeEvent(input$b0, {
@@ -236,13 +249,13 @@ LORDServer <- function(input, output, session, data) {
       } else {
         hideFeedback("b0")
       }
-    }
+    }, ignoreNULL = FALSE
     )
     
     observeEvent(input$tau.discard, {
       req(input$tau.discard)
       if(as.numeric(input$tau.discard) > 1 | as.numeric(input$tau.discard) <= 0 |
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+         str_detect(input$tau.discard, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "tau.discard",
           text = "Value not between 0 and 1",
@@ -251,7 +264,7 @@ LORDServer <- function(input, output, session, data) {
       } else {
         hideFeedback("tau.discard")
       }
-    }
+    }, ignoreNULL = FALSE
     )
     
     observeEvent(input$boundnum, {
@@ -299,7 +312,8 @@ LORDServer <- function(input, output, session, data) {
               input$b0, 
               input$tau.discard,
               input$random,
-              input$boundnum) %>%
+              input$boundnum,
+              input$seed) %>%
     bindEvent(input$go)
   
   #reset inputs
@@ -395,16 +409,23 @@ SAFFRONServer <- function(input, output, session, data) {
     
     #check parameters
     alpha = as.numeric(input$alpha)
+    req(input$alpha)
     lambda = as.numeric(input$lambda)
+    req(input$lambda)
     random = ifelse(input$random == "True", T, F)
     discard = ifelse(input$discard == "True", T, F)
     tau.discard = as.numeric(input$tau.discard)
+    req(input$tau.discard)
+    seed = as.numeric(input$seed)
+    req(input$seed)
     
-    #provide user feedback
+    set.seed(seed)
+    
+    # provide user feedback
     observeEvent(input$alpha, {
       req(input$alpha)
       if(as.numeric(input$alpha) > 1 | as.numeric(input$alpha) <= 0 |
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+         str_detect(input$alpha, "[a-zA-Z\\,\\-]+") | is.null(input$alpha)) {
         showFeedbackDanger(
           inputId = "alpha",
           text = "Value not between 0 and 1",
@@ -413,13 +434,13 @@ SAFFRONServer <- function(input, output, session, data) {
       } else {
         hideFeedback("alpha")
       }
-    }
+    }, ignoreNULL = FALSE
     )
     
     observeEvent(input$lambda, {
       req(input$lambda)
       if(as.numeric(input$lambda) > 1 | as.numeric(input$lambda) <= 0 |
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+         str_detect(input$lambda, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "lambda",
           text = "Value not between 0 and 1",
@@ -428,22 +449,24 @@ SAFFRONServer <- function(input, output, session, data) {
       } else {
         hideFeedback("lambda")
       }
-    }
+    }, ignoreNULL = FALSE
     )
     
     observeEvent(input$tau.discard, {
       req(input$tau.discard)
       if(as.numeric(input$tau.discard) > 1 | as.numeric(input$tau.discard) <= 0 | 
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+         str_detect(input$tau.discard, "[a-zA-Z\\,\\-]+")) {
+        cat(stderr(), "a", "\n")
         showFeedbackDanger(
           inputId = "tau.discard",
           text = "Value not between 0 and 1",
           icon = NULL
         )
+        cat(stderr(), "b", "\n")
       } else {
         hideFeedback("tau.discard")
       }
-    }
+    }, ignoreNULL = FALSE
     )
     
     observeEvent(input$boundnum, {
@@ -462,7 +485,7 @@ SAFFRONServer <- function(input, output, session, data) {
     if(!is.null(data())){
       shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
-
+    
     if(input$boundnum == 0) {
       out <- SAFFRON(d = data(),
                      alpha = alpha,
@@ -481,7 +504,7 @@ SAFFRONServer <- function(input, output, session, data) {
                      discard = discard,
                      tau.discard = tau.discard)
     }
-
+    
     shiny::removeModal()
     
     out
@@ -492,7 +515,8 @@ SAFFRONServer <- function(input, output, session, data) {
               input$random,
               input$discard,
               input$tau.discard,
-              input$boundnum) %>%
+              input$boundnum,
+              input$seed) %>%
     bindEvent(input$go)
   
   #reset inputs
@@ -570,13 +594,16 @@ ADDISServer <- function(input, output, session, data) {
     
     #check parameters
     alpha = as.numeric(input$alpha)
+    req(input$alpha)
     lambda = as.numeric(input$lambda)
+    req(input$lambda)
     tau = as.numeric(input$tau)
+    req(input$tau)
     
     observeEvent(input$alpha, {
       req(input$alpha)
       if(as.numeric(input$alpha) > 1 | as.numeric(input$alpha) <= 0 |
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+         str_detect(input$alpha, "[a-zA-Z\\,\\-]+") | is.null(input$alpha)) {
         showFeedbackDanger(
           inputId = "alpha",
           text = "Value not between 0 and 1",
@@ -585,13 +612,13 @@ ADDISServer <- function(input, output, session, data) {
       } else {
         hideFeedback("alpha")
       }
-    }
+    }, ignoreNULL = FALSE
     )
     
     observeEvent(input$lambda, {
       req(input$lambda)
       if(as.numeric(input$lambda) > 1 | as.numeric(input$lambda) <= 0 |
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+         str_detect(input$lambda, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "lambda",
           text = "Value not between 0 and 1",
@@ -600,13 +627,13 @@ ADDISServer <- function(input, output, session, data) {
       } else {
         hideFeedback("lambda")
       }
-    }
+    }, ignoreNULL = FALSE
     )
     
     observeEvent(input$tau, {
       req(input$tau)
       if(as.numeric(input$tau) > 1 | as.numeric(input$tau) <= 0 |
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+         str_detect(input$tau, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "tau",
           text = "Value not between 0 and 1",
@@ -615,7 +642,7 @@ ADDISServer <- function(input, output, session, data) {
       } else {
         hideFeedback("tau")
       }
-    }
+    }, ignoreNULL = FALSE
     )
     
     observeEvent(input$boundnum, {
@@ -737,7 +764,12 @@ alphainvestingServer <- function(input, output, session, data) {
     
     #check parameters
     alpha = as.numeric(input$alpha)
+    req(input$alpha)
     random = ifelse(input$random == "True", T, F)
+    seed = as.numeric(input$seed)
+    req(input$seed)
+    
+    set.seed(seed)
     
     observeEvent(input$alpha, {
       req(input$alpha)
@@ -751,7 +783,7 @@ alphainvestingServer <- function(input, output, session, data) {
       } else {
         hideFeedback("alpha")
       }
-    }
+    }, ignoreNULL = FALSE
     )
     
     observeEvent(input$boundnum, {
@@ -792,7 +824,8 @@ alphainvestingServer <- function(input, output, session, data) {
     bindCache(data() %>% slice(50),
               input$alpha,
               input$random,
-              input$boundnum) %>%
+              input$boundnum,
+              input$seed) %>%
     bindEvent(input$go)
   
   #record user params
@@ -1900,24 +1933,27 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
   })
   
   observe({
-    if(max(SAFFRONresult$SAFFRONres()$alphai) > SAFFRONresult$alpha()) {
-      output$explain <- renderUI({
-        div(
-          p(
-            "Note that in settings where SAFFRON is rejecting many p-values, the testing levels can go above alpha. For a more technical explanation, click More Info."
-          ),
-          shinyWidgets::actionBttn(ns("showexp"),
-                                   label = "More Info",
-                                   style = "fill",
-                                   color = "primary"),
-          style = "text-align: center;
+    alphacheck <- SAFFRONresult$alpha()
+    if(!is.na(alphacheck)){
+      if(max(SAFFRONresult$SAFFRONres()$alphai) > alphacheck) {
+        output$explain <- renderUI({
+          div(
+            p(
+              "Note that in settings where SAFFRON is rejecting many p-values, the testing levels can go above alpha. For a more technical explanation, click More Info."
+            ),
+            shinyWidgets::actionBttn(ns("showexp"),
+                                     label = "More Info",
+                                     style = "fill",
+                                     color = "primary"),
+            style = "text-align: center;
     vertical-align: middle;
     font-family: Poppins, sans-serif;
     font-size: 12px"
-        )
-      }) #close renderUI
-    } else {
-      div()
+          )
+        }) #close renderUI
+      } else {
+        div()
+      }
     }
   }) #close observe
   
@@ -1985,7 +2021,9 @@ ADDISplotServer <- function(input, output, session, ADDISresult) {
   })
   
   observe({
-    if(max(ADDISresult$ADDISres()$alphai) > ADDISresult$alpha()) {
+    alphacheck <- ADDISresult$alpha()
+    if(!is.na(alphacheck)){
+      if(max(ADDISresult$ADDISres()$alphai) > alphacheck) {
       output$explain <- renderUI({
         div(
           p(
@@ -2003,6 +2041,7 @@ ADDISplotServer <- function(input, output, session, ADDISresult) {
       }) #close renderUI
     } else {
       div()
+    }
     }
   }) #close observe
   
@@ -2429,7 +2468,7 @@ SAFFRONcompServer <- function(input, output, session, SAFFRONresult, data) {
   
   data_to_plot <- eventReactive(input$compare, {
     
-    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    # shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
     
     current_alg_data <- SAFFRONresult$SAFFRONres()
     
@@ -2450,7 +2489,7 @@ SAFFRONcompServer <- function(input, output, session, SAFFRONresult, data) {
                    names_to = "adjustment",
                    values_to = "alpha")
     
-    shiny::removeModal()
+    # shiny::removeModal()
   })
   
   output$comp <- renderPlotly({
@@ -2536,7 +2575,7 @@ ADDIScompServer <- function(input, output, session, ADDISresult, data) {
   
   data_to_plot <- eventReactive(input$compare, {
     
-    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    # shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
     
     current_alg_data <- ADDISresult$ADDISres()
     
@@ -2557,7 +2596,7 @@ ADDIScompServer <- function(input, output, session, ADDISresult, data) {
                    names_to = "adjustment",
                    values_to = "alpha")
     
-    shiny::removeModal()
+    # shiny::removeModal()
   })
   
   output$comp <- renderPlotly({
@@ -2643,7 +2682,7 @@ alphainvestingcompServer <- function(input, output, session, alphainvestingresul
   
   data_to_plot <- eventReactive(input$compare, {
     
-    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    # shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
     
     current_alg_data <- alphainvestingresult$alphainvestingres()
     
@@ -2664,7 +2703,7 @@ alphainvestingcompServer <- function(input, output, session, alphainvestingresul
                    names_to = "adjustment",
                    values_to = "alpha")
     
-    shiny::removeModal()
+    # shiny::removeModal()
   })
   
   output$comp <- renderPlotly({
@@ -2745,7 +2784,7 @@ BatchPRDScompServer <- function(input, output, session, BatchPRDSresult, data) {
   
   data_to_plot <- eventReactive(input$batchcompare, {
     
-    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    # shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
     
     select_alg_rx <- reactive({
       out <- select_alg(alg = input$batchalg, data = data())
@@ -2766,7 +2805,7 @@ BatchPRDScompServer <- function(input, output, session, BatchPRDSresult, data) {
                    names_to = "adjustment",
                    values_to = "alpha")
     
-    shiny::removeModal()
+    # shiny::removeModal()
   })
   
   output$batchcomp <- renderPlotly({
@@ -2797,7 +2836,7 @@ BatchBHcompServer <- function(input, output, session, BatchBHresult, data) {
   
   data_to_plot <- eventReactive(input$batchcompare, {
     
-    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    # shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
     
     select_alg_rx <- reactive({
       out <- select_alg(alg = input$batchalg, data = data())
@@ -2818,7 +2857,7 @@ BatchBHcompServer <- function(input, output, session, BatchBHresult, data) {
                    names_to = "adjustment",
                    values_to = "alpha")
     
-    shiny::removeModal()
+    # shiny::removeModal()
   })
   
   output$batchcomp <- renderPlotly({
@@ -2849,7 +2888,7 @@ BatchStBHcompServer <- function(input, output, session, BatchStBHresult, data) {
   
   data_to_plot <- eventReactive(input$batchcompare, {
     
-    shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
+    # shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime of up to a minute..."))
     
     select_alg_rx <- reactive({
       out <- select_alg(alg = input$batchalg, data = data())
@@ -2870,7 +2909,7 @@ BatchStBHcompServer <- function(input, output, session, BatchStBHresult, data) {
                    names_to = "adjustment",
                    values_to = "alpha")
     
-    shiny::removeModal()
+    # shiny::removeModal()
   })
   
   output$batchcomp <- renderPlotly({
