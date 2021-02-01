@@ -28,18 +28,14 @@ LONDServer <- function(input, output, session, data) {
     
     #provide user feedback
     observeEvent(input$alpha, {
-      cat(file=stderr(), input$alpha, " a", "\n")
       req(input$alpha)
-      cat(file=stderr(), input$alpha, " b", "\n")
       if(as.numeric(input$alpha) > 1 | as.numeric(input$alpha) <= 0 |
          str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
-        cat(file=stderr(), input$alpha, " c", "\n")
         showFeedbackDanger(
           inputId = "alpha",
           text = "Value not between 0 and 1",
           icon = NULL
         )
-        cat(file=stderr(), input$alpha, " d", "\n")
       } else {
         hideFeedback("alpha")
       }
@@ -76,7 +72,7 @@ LONDServer <- function(input, output, session, data) {
                   random = random,
                   original = original)
     }
-
+    
     shiny::removeModal()
     
     out
@@ -88,7 +84,7 @@ LONDServer <- function(input, output, session, data) {
                    input$seed,
                    input$boundnum) %>%
     bindEvent(input$go)
-
+  
   #reset inputs
   observeEvent(input$reset, {
     updateTextInput(session, "alpha", value = 0.05)
@@ -678,7 +674,7 @@ ADDISServer <- function(input, output, session, data) {
                    tau = tau,
                    async = FALSE)
     }
-
+    
     shiny::removeModal()
     
     out
@@ -816,7 +812,7 @@ alphainvestingServer <- function(input, output, session, data) {
                              gammai = gammai,
                              random = random)
     }
-
+    
     shiny::removeModal()
     
     out
@@ -1006,7 +1002,7 @@ BatchBHServer <- function(input, output, session, data) {
     
     #cache collision?
     out <- BatchBH(d = data(),
-                     alpha = alpha)
+                   alpha = alpha)
     shiny::removeModal()
     
     out
@@ -1088,7 +1084,7 @@ BatchStBHServer <- function(input, output, session, data) {
     
     #cache collision?
     out <- BatchStBH(d = data(),
-                   alpha = alpha)
+                     alpha = alpha)
     shiny::removeModal()
     
     out
@@ -1802,7 +1798,7 @@ LONDplotServer <- function(input, output, session, LONDresult) {
           textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
                          sync = T)
-          })
+        })
       ),
       p(
         renderTextillate({
@@ -2024,24 +2020,24 @@ ADDISplotServer <- function(input, output, session, ADDISresult) {
     alphacheck <- ADDISresult$alpha()
     if(!is.na(alphacheck)){
       if(max(ADDISresult$ADDISres()$alphai) > alphacheck) {
-      output$explain <- renderUI({
-        div(
-          p(
-            "Note that in settings where ADDIS is rejecting many p-values, the testing levels can go above alpha. For a more technical explanation, click More Info."
-          ),
-          shinyWidgets::actionBttn(ns("showexp"),
-                                   label = "More Info",
-                                   style = "fill",
-                                   color = "primary"),
-          style = "text-align: center;
+        output$explain <- renderUI({
+          div(
+            p(
+              "Note that in settings where ADDIS is rejecting many p-values, the testing levels can go above alpha. For a more technical explanation, click More Info."
+            ),
+            shinyWidgets::actionBttn(ns("showexp"),
+                                     label = "More Info",
+                                     style = "fill",
+                                     color = "primary"),
+            style = "text-align: center;
     vertical-align: middle;
     font-family: Poppins, sans-serif;
     font-size: 12px"
-        )
-      }) #close renderUI
-    } else {
-      div()
-    }
+          )
+        }) #close renderUI
+      } else {
+        div()
+      }
     }
   }) #close observe
   
@@ -2118,7 +2114,7 @@ BatchPRDSplotServer <- function(input, output, session, BatchPRDSresult) {
     
     new_data <- BatchPRDSresult$BatchPRDSres() %>%
       distinct(batch, .keep_all = TRUE)
-      
+    
     plot_ly(new_data, x = ~batch, y = ~log(alphai)) %>%
       add_lines(mode = "lines+markers") %>%
       layout(xaxis = ex, yaxis = why)
@@ -2263,7 +2259,7 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
   })
   
   data_to_plot <- eventReactive(input$compare, {
-
+    
     current_alg_data <- LONDresult$LONDres()
     
     select_alg_data <- select_alg_data()
@@ -2278,9 +2274,9 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
                    names_to = "adjustment",
                    values_to = "alpha")
   })
-    # bindCache(LONDresult$LONDres() %>% slice_tail(),
-    #           select_alg_data() %>% slice_tail()) %>%
-    # bindEvent(input$compare)
+  # bindCache(LONDresult$LONDres() %>% slice_tail(),
+  #           select_alg_data() %>% slice_tail()) %>%
+  # bindEvent(input$compare)
   
   output$comp <- renderPlotly({
     # shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 30 seconds and 1 minute..."))

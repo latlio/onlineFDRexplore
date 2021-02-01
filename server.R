@@ -8,10 +8,6 @@
 source("src/server-mods.R")
 source("src/cicerone_guide.R")
 
-#for alg recommendation feature
-demodata <- read_csv("data/powerFDRdata.csv") %>%
-  mutate(pi.vec = round(pi.vec, 2))
-
 #for hover functionality
 with_tooltip <- function(value, tooltip, ...) {
   div(style = "text-decoration: underline; text-decoration-style: dotted; cursor: help",
@@ -35,6 +31,9 @@ server <- function(input, output, session) {
   observe({
     toggle(id = "novice", condition = input$checkbox)
   })
+  
+  demodata <- read_csv("data/powerFDRdata.csv") %>%
+    mutate(pi.vec = round(pi.vec, 2))
   
   filter_data <- reactive({
     size = as.numeric(input$size)
@@ -67,47 +66,71 @@ server <- function(input, output, session) {
     if(input$format == "Fully sequential") {
       div(
         DT::renderDT(tibble(id = c(1, "A", "1A"),
-                        date = c("2014-12-01", "2014-12-01", "2014-12-3"),
-                        pval = c(0.0674, 0.0532, 0.0127)),
-                 options = list(info = F,
-                                lengthChange = F,
-                                ordering = F,
-                                paging = F,
-                                searching = F)),
+                            date = c("2014-12-01", "2014-12-01", "2014-12-3"),
+                            pval = c(0.0674, 0.0532, 0.0127)),
+                     options = list(info = F,
+                                    lengthChange = F,
+                                    ordering = F,
+                                    paging = F,
+                                    searching = F)),
         p("The id column can be a number, a string, or an alphanumeric sequence. The date column is optional, but if you choose to provide a date, please ensure that it is in YYYY-MM-DD, so that the app can correctly parse it. You may have to change the cell format to text if using something like Excel.")
       )
     } else {
       div(
-       DT::renderDT(tibble(id = c(1, "A", "1A"),
-                        pval = c(0.0674, 0.0532, 0.0127),
-                        batch = c(1,1,2)),
-                 options = list(info = F,
-                                lengthChange = F,
-                                ordering = F,
-                                paging = F,
-                                searching = F)),
+        DT::renderDT(tibble(id = c(1, "A", "1A"),
+                            pval = c(0.0674, 0.0532, 0.0127),
+                            batch = c(1,1,2)),
+                     options = list(info = F,
+                                    lengthChange = F,
+                                    ordering = F,
+                                    paging = F,
+                                    searching = F)),
         p("The id column can be a number, a string, or an alphanumeric sequence. Please ensure that the batches are numbered starting from 1.")
       )
     }
   })
-
+  
   #Load in data
   in_data <- reactive({
-    req(input$file)
-    
-    ext <- tools::file_ext(input$file$name)
-    shiny::validate(need(ext %in% c(
-      'text/csv',
-      'text/comma-separated-values',
-      'text/tab-separated-values',
-      'text/plain',
-      'csv',
-      'tsv'), 
-      "Please upload a csv file!"))
-    
-    data <- read_csv(input$file$datapath) %>%
-      dplyr::mutate(across(any_of("date"), ~as.Date(.x, format = "%m/%d/%y")))
+    if(is.null(input$file)) {
+      data <- read_csv("data/sample.csv")
+    } else {
+      req(input$file)
+      ext <- tools::file_ext(input$file$name)
+      shiny::validate(need(ext %in% c(
+        'text/csv',
+        'text/comma-separated-values',
+        'text/tab-separated-values',
+        'text/plain',
+        'csv',
+        'tsv'), 
+        "Please upload a csv file!"))
+      
+      data <- read_csv(input$file$datapath) %>%
+        mutate(across(any_of("date"), ~as.Date(.x, format = "%m/%d/%y")))
+    }
   })
+  
+  #data preview
+  output$datapreview <- renderDT(
+    head(in_data(), 5),
+    options = list(info = F,
+                   lengthChange = F,
+                   ordering = F,
+                   paging = F,
+                   searching = F)
+  )
+  
+  output$datatype <- renderDT(
+    in_data() %>%
+      summarize(across(everything(), class)) %>%
+      pivot_longer(everything(), names_to = "variable", values_to = "type"),
+    options = list(info = F,
+                   lengthChange = F,
+                   ordering = F,
+                   paging = F,
+                   searching = F)
+  )
   
   #Dynamically display alg jump button ONLY when file is uploaded
   output$showjump <- renderUI({
@@ -192,7 +215,7 @@ server <- function(input, output, session) {
   callModule(BatchPRDScountServer, "BatchPRDScount", BatchPRDS_result)
   callModule(BatchPRDSplotServer, "BatchPRDSplot", BatchPRDS_result)
   callModule(BatchPRDScompServer, "BatchPRDScomp", BatchPRDS_result, data = in_data)
-
+  
   #### Batch BH ####
   BatchBH_result <- callModule(BatchBHServer, id = "inputBatchBH", data = in_data)
   callModule(BatchBHcountServer, "BatchBHcount", BatchBH_result)

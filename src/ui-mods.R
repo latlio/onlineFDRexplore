@@ -78,7 +78,7 @@ LONDUI <- function(id) {
                                       onLabel = "True",
                                       offLabel = "False",
                                       width = "80px")),
-      
+        
         div(style="display: inline-block;vertical-align:top; width: 200px;",
             tags$strong(id = ns("label_bound"),
                         "Bound:"),
@@ -93,7 +93,7 @@ LONDUI <- function(id) {
                                placement = "right",
                                trigger = "hover")
         ),
-      
+        
         shinyjs::hidden(
           div(
             id = ns("boundtoggle"),
@@ -105,7 +105,7 @@ LONDUI <- function(id) {
                                  value = 0))
           )
         )
-    ) #close div
+      ) #close div
     ), #close hidden
     shinyWidgets::actionBttn(
       inputId = ns("go"),
@@ -686,19 +686,19 @@ plot2UI <- function(id) {
 }
 
 batchplotUI <- function(id) {
-    ns <- NS(id)
-    
-    tagList(
-      plotlyOutput(ns("bplot1")) %>%
-        shinycssloaders::withSpinner(type = 6,
-                                     color = "#0066CC"),
-      br(),     
-      plotlyOutput(ns("bplot2")) %>%
-        shinycssloaders::withSpinner(type = 6,
-                                     color = "#0066CC"),
-      br(),
-      uiOutput(ns("bnum"))
-    )
+  ns <- NS(id)
+  
+  tagList(
+    plotlyOutput(ns("bplot1")) %>%
+      shinycssloaders::withSpinner(type = 6,
+                                   color = "#0066CC"),
+    br(),     
+    plotlyOutput(ns("bplot2")) %>%
+      shinycssloaders::withSpinner(type = 6,
+                                   color = "#0066CC"),
+    br(),
+    uiOutput(ns("bnum"))
+  )
 }
 
 set_html_breaks <- function(n) {

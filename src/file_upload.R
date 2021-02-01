@@ -21,19 +21,19 @@ fluidPage(
         br(),
         "For more information about the algorithms themselves, check out the ", a(href = "https://dsrobertson.github.io/onlineFDR/articles/onlineFDR.html", target = "_blank", rel = "noopener noreferrer", "Get Started"), "page in our vignette."))  %>%
       bs_append(title = "Help & feedback", content = p("For additional help or to submit feedback or bug reports, please contact:", 
-       br(),
-       "David Robertson",
-       br(),
-       "MRC Biostatistics Unit",
-       br(),
-       a(href = "mailto:david.robertson@mrc-bsu.cam.ac.uk", "Email"),
-       br(),
-       br(),
-       "Lathan Liou",
-       br(),
-       "Merck & Co.",
-       br(),
-       a(href = "mailto:lathanliu21@gmail.com", "Email")))
+                                                       br(),
+                                                       "David Robertson",
+                                                       br(),
+                                                       "MRC Biostatistics Unit",
+                                                       br(),
+                                                       a(href = "mailto:david.robertson@mrc-bsu.cam.ac.uk", "Email"),
+                                                       br(),
+                                                       br(),
+                                                       "Lathan Liou",
+                                                       br(),
+                                                       "Merck & Co.",
+                                                       br(),
+                                                       a(href = "mailto:lathanliu21@gmail.com", "Email")))
   ), #close fluidrow
   fluidRow(
     #### CHECKBOX FIRST TIME USER ####
@@ -147,9 +147,9 @@ fluidPage(
   fluidRow(
     #### UPLOAD DATA ####
     h1("Upload your dataset", id = "upload"),
-    p("Ensure that your CSV file contains at the minimum, a column of p-values with the name 'pval'. If you're including dates, ensure that they are in the format YYYY-MM-DD. "),
+    p("Ensure that your CSV file contains at the minimum, a column of p-values with the name 'pval'. If you're including dates, ensure that they are in the format YYYY-MM-DD. If you'd like to explore this app's features with a sample dataset, please feel free to navigate to one of the following algorithms, as one has been pre-loaded by default."),
     column(
-      width = 8,
+      width = 6,
       fileInput("file", NULL,
                 multiple = FALSE,
                 accept = c('text/csv', 
@@ -158,9 +158,18 @@ fluidPage(
                            '.csv'))
     ),
     column(
-      width = 4,
+      width = 6,
       align = "center",
       uiOutput("showjump")
+    )
+  ), #close fluidrow
+  fluidRow(
+    h1("Data Preview", id = "window"),
+    p("You can see the first five rows of your data as well as the variable types to verify whether your data is properly formatted."),
+    column(
+      width = 12,
+      DTOutput("datapreview"),
+      DTOutput("datatype")
     )
   )
 ) #close fluidpage
