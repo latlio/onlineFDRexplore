@@ -2253,7 +2253,6 @@ LONDcompServer <- function(input, output, session, LONDresult, data) {
   }
   
   select_alg_data <- eventReactive(input$compare, {
-    print(as.numeric(LONDresult$alpha()))
     out <- select_alg(alg = input$alg, data = data(),
                       alpha = as.numeric(LONDresult$alpha()))
   })
