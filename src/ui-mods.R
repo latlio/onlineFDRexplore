@@ -634,7 +634,7 @@ compareUI <- function(id) {
   
   tagList(
     br(),
-    p("Make sure you already clicked Calculate. Clicking the 'Compare' button compares the results of two algorithms. You should set alpha to 0.05 for a fair comparison. Note that for datasets with more than 50,000 p-values, expect a runtime between 30 seconds and 1 minute."),
+    p("To use this feature, first click 'Reset Inputs'. Make sure you have already clicked 'Calculate'. This feature compares the results of two algorithms at their default settings. Changing any inputs will result in an unfair and nonsensical comparison. Note that for datasets with more than 50,000 p-values, expect a runtime between 30 seconds and 1 minute."),
     column(width = 12,
            align = "center",
            div(style = "display: inline-block;vertical-align:top;text-align:center",
@@ -660,7 +660,7 @@ batchcompareUI <- function(id) {
   
   tagList(
     br(),
-    p("Make sure you already clicked Calculate. Clicking the 'Compare' button compares the results of two algorithms. You should set alpha to 0.05 for a fair comparison."),
+    p("To use this feature, first click 'Reset Inputs'. Make sure you have already clicked 'Calculate'. This feature compares the results of two algorithms at their default alpha setting. Note that for datasets with more than 50,000 p-values, expect a runtime between 30 seconds and 1 minute."),
     column(width = 12,
            align = "center",
            div(style = "display: inline-block;vertical-align:top;text-align:center",

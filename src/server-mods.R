@@ -13,6 +13,11 @@ set_html_breaks <- function(n) {
 LONDServer <- function(input, output, session, data) {
   ns <- session$ns
   
+  #initialize bound
+  observeEvent(input$algbound, {
+    updateTextInput(session, "boundnum", value = nrow(data()))
+  })
+  
   # Run LOND algorithm
   LONDres <- reactive({
     
@@ -27,7 +32,7 @@ LONDServer <- function(input, output, session, data) {
     #provide user feedback
     observeEvent(input$alpha, {
       req(input$alpha)
-      if(as.numeric(input$alpha) > 1 | as.numeric(input$alpha) <= 0 |
+      if(input$alpha > 1 | input$alpha <= 0 |
          str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "alpha",
@@ -41,10 +46,11 @@ LONDServer <- function(input, output, session, data) {
     )
     
     observeEvent(input$boundnum, {
+      req(input$boundnum)
       if(as.numeric(input$boundnum) <= 0 | str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "boundnum",
-          text = "Value not between 0 and 1",
+          text = "Value not a positive number",
           icon = NULL
         )
       } else {
@@ -61,25 +67,26 @@ LONDServer <- function(input, output, session, data) {
       out <- LOND(d = data(),
                   alpha = alpha,
                   random = input$random,
+                  dep = input$dep,
                   original = input$original)
-    } else if (input$algbound & input$boundnum < nrow(data())) {
+    } else if (input$algbound & as.numeric(input$boundnum) < nrow(data())) {
       shiny::showNotification(paste0("Please input a bound greater than or equal to the number of p-values in your data. The default dataset has 15 p-values."), type = "err", duration = NULL)
       
       out <- NULL
     } else {
-      boundnum <- as.numeric(input$boundnum)
-      betai <- setBound("LOND", N = boundnum)
+      betai <- setBound("LOND", N = as.numeric(input$boundnum))
       out <- LOND(d = data(),
                   alpha = alpha,
                   betai = betai,
                   random = input$random,
+                  dep = input$dep,
                   original = input$original)
     }
     
     shiny::removeModal()
     
     out
-  }) %>% bindCache(data() %>% slice(50),
+  }) %>% bindCache(data() %>% slice_head(),
                    input$alpha,
                    input$dep,
                    input$random,
@@ -106,12 +113,6 @@ LONDServer <- function(input, output, session, data) {
   
   observe({
     toggle(id = "boundtoggle", condition = input$algbound)
-  })
-  
-  observeEvent(input$algbound, {
-    if(input$algbound == FALSE) {
-      updateTextInput(session, "boundnum", value = nrow(data()))
-    }
   })
   
   #record user params
@@ -193,6 +194,10 @@ LORDServer <- function(input, output, session, data) {
     }
   })
   
+  observeEvent(input$algbound, {
+    updateTextInput(session, "boundnum", value = nrow(data()))
+  })
+  
   #record user params
   LORDparams <- reactive({
     params <- reactiveValuesToList(input)
@@ -210,9 +215,9 @@ LORDServer <- function(input, output, session, data) {
     req(input$alpha)
     version = as.character(input$version)
     b0 = as.numeric(input$b0)
-    rep(input$b0)
+    req(input$b0)
     tau.discard = as.numeric(input$tau.discard)
-    rep(input$tau.discard)
+    req(input$tau.discard)
     seed = as.numeric(input$seed)
     req(input$seed)
     
@@ -270,7 +275,7 @@ LORDServer <- function(input, output, session, data) {
       if(as.numeric(input$boundnum) <= 0 | str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "boundnum",
-          text = "Value not between 0 and 1",
+          text = "Value not a positive number",
           icon = NULL
         )
       } else {
@@ -287,22 +292,19 @@ LORDServer <- function(input, output, session, data) {
       out <- LORD(d = data(),
                   alpha = alpha,
                   version = version,
-                  w0 = w0,
                   b0 = b0,
                   tau.discard = tau.discard,
                   random = input$random)
-    } else if (input$algbound & input$boundnum < nrow(data())) {
+    } else if (input$algbound & as.numeric(input$boundnum) < nrow(data())) {
       shiny::showNotification(paste0("Please input a bound greater than or equal to the number of p-values in your data. The default dataset has 15 p-values."), type = "err", duration = NULL)
       
       out <- NULL
     } else {
-      boundnum <- as.numeric(input$boundnum)
-      gammai <- setBound("LORD", N = boundnum)
+      gammai <- setBound("LORD", N = as.numeric(input$boundnum))
       out <- LORD(d = data(),
                   alpha = alpha,
                   gammai = gammai,
                   version = version,
-                  w0 = w0,
                   b0 = b0,
                   tau.discard = tau.discard,
                   random = input$random)
@@ -311,7 +313,7 @@ LORDServer <- function(input, output, session, data) {
     
     out
   }) %>%
-    bindCache(data() %>% slice(50),
+    bindCache(data() %>% slice_head(),
               input$alpha, 
               input$version, 
               input$b0, 
@@ -341,12 +343,6 @@ LORDServer <- function(input, output, session, data) {
     toggle(id = "boundtoggle", condition = input$algbound)
   })
   
-  observeEvent(input$algbound, {
-    if(input$algbound == FALSE) {
-      updateTextInput(session, "boundnum", value = nrow(data()))
-    }
-  })
-  
   # remove placeholder text
   observeEvent(input$go, {
     
@@ -363,13 +359,6 @@ LORDServer <- function(input, output, session, data) {
     }
     
   })
-  
-  # # output no data loaded error message
-  # observeEvent(input$go, {
-  #   if(is.null(data)) {
-  #     shiny::showNotification("Please upload a dataset first!", type = "err")
-  #   }
-  # })
   
   # Output error messages
   observeEvent(input$go, {
@@ -389,6 +378,10 @@ LORDServer <- function(input, output, session, data) {
 }
 SAFFRONServer <- function(input, output, session, data) {
   ns <- session$ns
+  
+  observeEvent(input$algbound, {
+    updateTextInput(session, "boundnum", value = nrow(data()))
+  })
   
   SAFFRONres <- reactive({
     
@@ -454,7 +447,7 @@ SAFFRONServer <- function(input, output, session, data) {
       if(as.numeric(input$boundnum) <= 0 | str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "boundnum",
-          text = "Value not a number",
+          text = "Value not a positive number",
           icon = NULL
         )
       } else {
@@ -470,22 +463,19 @@ SAFFRONServer <- function(input, output, session, data) {
     if(!input$algbound) {
       out <- SAFFRON(d = data(),
                      alpha = alpha,
-                     w0 = w0,
                      lambda = lambda,
                      random = input$random,
                      discard = input$discard,
                      tau.discard = tau.discard)
-    } else if (input$algbound & input$boundnum < nrow(data())) {
+    } else if (input$algbound & as.numeric(input$boundnum) < nrow(data())) {
       shiny::showNotification(paste0("Please input a bound greater than or equal to the number of p-values in your data. The default dataset has 15 p-values."), type = "err", duration = NULL)
       
       out <- NULL
     } else {
-      boundnum <- as.numeric(input$boundnum)
-      gammai <- setBound("SAFFRON", N = boundnum)
+      gammai <- setBound("SAFFRON", N = as.numeric(input$boundnum))
       out <- SAFFRON(d = data(),
                      alpha = alpha,
                      gammai = gammai,
-                     w0 = w0,
                      lambda = lambda,
                      random = input$random,
                      discard = input$discard,
@@ -496,7 +486,7 @@ SAFFRONServer <- function(input, output, session, data) {
     
     out
   }) %>%
-    bindCache(data() %>% slice(50),
+    bindCache(data() %>% slice_head(),
               input$alpha,
               input$lambda,
               input$random,
@@ -524,12 +514,6 @@ SAFFRONServer <- function(input, output, session, data) {
   
   observe({
     toggle(id = "boundtoggle", condition = input$algbound)
-  })
-  
-  observeEvent(input$algbound, {
-    if(input$algbound == FALSE) {
-      updateTextInput(session, "boundnum", value = nrow(data()))
-    }
   })
   
   #record user params
@@ -577,6 +561,10 @@ SAFFRONServer <- function(input, output, session, data) {
 }
 ADDISServer <- function(input, output, session, data) {
   ns <- session$ns
+  
+  observeEvent(input$algbound, {
+    updateTextInput(session, "boundnum", value = nrow(data()))
+  })
   
   ADDISres <- reactive({
     
@@ -641,7 +629,7 @@ ADDISServer <- function(input, output, session, data) {
       if(as.numeric(input$boundnum) <= 0 | str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "boundnum",
-          text = "Value not a number",
+          text = "Value not a positive number",
           icon = NULL
         )
       } else {
@@ -656,21 +644,18 @@ ADDISServer <- function(input, output, session, data) {
     if(!input$algbound) {
       out <- ADDIS(d = data(),
                    alpha = alpha,
-                   w0 = w0,
                    lambda = lambda,
                    tau = tau,
                    random = input$random)
-    } else if (input$algbound & input$boundnum < nrow(data())) {
+    } else if (input$algbound & as.numeric(input$boundnum) < nrow(data())) {
       shiny::showNotification(paste0("Please input a bound greater than or equal to the number of p-values in your data. The default dataset has 15 p-values."), type = "err", duration = NULL)
       
       out <- NULL
     } else {
-      boundnum <- as.numeric(input$boundnum)
-      gammai <- setBound("ADDIS", N = boundnum)
+      gammai <- setBound("ADDIS", N = as.numeric(input$boundnum))
       out <- ADDIS(d = data(),
                    alpha = alpha,
                    gammai = gammai,
-                   w0 = w0,
                    lambda = lambda,
                    tau = tau,
                    random = input$random)
@@ -680,13 +665,14 @@ ADDISServer <- function(input, output, session, data) {
     
     out
   }) %>%
-    bindCache(data() %>% slice(50),
+    bindCache(data() %>% slice_head(),
               input$alpha,
               input$lambda,
               input$tau,
               input$random,
               input$algbound,
-              input$boundnum) %>%
+              input$boundnum,
+              input$seed) %>%
     bindEvent(input$go)
   
   #reset inputs
@@ -694,6 +680,7 @@ ADDISServer <- function(input, output, session, data) {
     updateTextInput(session, "alpha", value = 0.05)
     updateTextInput(session, "lambda", value = 0.5)
     updateTextInput(session, "tau", value = 0.5)
+    updateSwitchInput(session, "random", value = TRUE)
     updateSwitchInput(session, "algbound", value = FALSE)
     updateTextInput(session, "boundnum", value = nrow(data()))
   })
@@ -704,12 +691,6 @@ ADDISServer <- function(input, output, session, data) {
   
   observe({
     toggle(id = "boundtoggle", condition = input$algbound)
-  })
-  
-  observeEvent(input$algbound, {
-    if(input$algbound == FALSE) {
-      updateTextInput(session, "boundnum", value = nrow(data()))
-    }
   })
   
   #record user params
@@ -759,6 +740,10 @@ ADDISServer <- function(input, output, session, data) {
 alphainvestingServer <- function(input, output, session, data) {
   ns <- session$ns
   
+  observeEvent(input$algbound, {
+    updateTextInput(session, "boundnum", value = nrow(data()))
+  })
+  
   alphainvestingres <- reactive({
     
     #check parameters
@@ -788,7 +773,7 @@ alphainvestingServer <- function(input, output, session, data) {
       if(as.numeric(input$boundnum) <= 0 | str_detect(input$boundnum, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "boundnum",
-          text = "Value not a number",
+          text = "Value not a positive number",
           icon = NULL
         )
       } else {
@@ -801,30 +786,28 @@ alphainvestingServer <- function(input, output, session, data) {
       shiny::showModal(modalDialog("For datasets with more than 50,000 p-values, expect a runtime between 5 and 30 seconds..."))
     }
     
+    
     if(!input$algbound) {
       out <- Alpha_investing(d = data(),
                              alpha = alpha,
-                             w0 = w0,
                              random = input$random)
-    } else if (input$algbound & input$boundnum < nrow(data())) {
+    } else if (input$algbound & as.numeric(input$boundnum) < nrow(data())) {
       shiny::showNotification(paste0("Please input a bound greater than or equal to the number of p-values in your data. The default dataset has 15 p-values."), type = "err", duration = NULL)
       
       out <- NULL
     } else {
-      boundnum <- as.numeric(input$boundnum)
-      gammai <- setBound("Alpha_investing", N = boundnum)
-      out <- ADDIS(d = data(),
-                   alpha = alpha,
-                   gammai = gammai,
-                   w0 = w0,
-                   random = input$random)
+      gammai <- setBound("Alpha_investing", N = as.numeric(input$boundnum))
+      out <- Alpha_investing(d = data(),
+                             alpha = alpha,
+                             gammai = gammai,
+                             random = input$random)
     }
     
     shiny::removeModal()
     
     out
   }) %>%
-    bindCache(data() %>% slice(50),
+    bindCache(data() %>% slice_head(),
               input$alpha,
               input$random,
               input$algbound,
@@ -873,12 +856,6 @@ alphainvestingServer <- function(input, output, session, data) {
   
   observe({
     toggle(id = "boundtoggle", condition = input$algbound)
-  })
-  
-  observeEvent(input$algbound, {
-    if(input$algbound == FALSE) {
-      updateTextInput(session, "boundnum", value = nrow(data()))
-    }
   })
   
   # output no data loaded error message
