@@ -341,8 +341,8 @@ LORDServer <- function(input, output, session, data) {
     toggle(id = "boundtoggle", condition = input$algbound)
   })
   
-  observeEvent(input$bound, {
-    if(input$bound == FALSE) {
+  observeEvent(input$algbound, {
+    if(input$algbound == FALSE) {
       updateTextInput(session, "boundnum", value = nrow(data()))
     }
   })
@@ -526,8 +526,8 @@ SAFFRONServer <- function(input, output, session, data) {
     toggle(id = "boundtoggle", condition = input$algbound)
   })
   
-  observeEvent(input$bound, {
-    if(input$bound == FALSE) {
+  observeEvent(input$algbound, {
+    if(input$algbound == FALSE) {
       updateTextInput(session, "boundnum", value = nrow(data()))
     }
   })
@@ -706,8 +706,8 @@ ADDISServer <- function(input, output, session, data) {
     toggle(id = "boundtoggle", condition = input$algbound)
   })
   
-  observeEvent(input$bound, {
-    if(input$bound == FALSE) {
+  observeEvent(input$algbound, {
+    if(input$algbound == FALSE) {
       updateTextInput(session, "boundnum", value = nrow(data()))
     }
   })
@@ -875,8 +875,8 @@ alphainvestingServer <- function(input, output, session, data) {
     toggle(id = "boundtoggle", condition = input$algbound)
   })
   
-  observeEvent(input$bound, {
-    if(input$bound == FALSE) {
+  observeEvent(input$algbound, {
+    if(input$algbound == FALSE) {
       updateTextInput(session, "boundnum", value = nrow(data()))
     }
   })
