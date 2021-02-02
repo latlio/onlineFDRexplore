@@ -82,7 +82,7 @@ LONDUI <- function(id) {
         div(style="display: inline-block;vertical-align:top; width: 200px;",
             tags$strong(id = ns("label_bound"),
                         "Bound:"),
-            shinyWidgets::switchInput(ns("bound"), 
+            shinyWidgets::switchInput(ns("algbound"), 
                                       NULL, 
                                       value = FALSE,
                                       onLabel = "True",
@@ -99,10 +99,11 @@ LONDUI <- function(id) {
             id = ns("boundtoggle"),
             div(style="display: inline-block;vertical-align:top; width: 200px;",
                 tags$strong("Number of hypotheses"),
-                shiny::textInput(ns("boundnum"), 
+                shiny::textInput(ns("boundnum"),
                                  NULL,
-                                 width = 80,
-                                 value = 0))
+                                 value = 100,
+                                 placeholder = "No bound",
+                                 width = 80))
           )
         )
       ) #close div
@@ -207,7 +208,7 @@ LORDUI <- function(id) {
         div(style="display: inline-block;vertical-align:top; width: 200px;",
             tags$strong(id = ns("label_bound"),
                         "Bound:"),
-            shinyWidgets::switchInput(ns("bound"), 
+            shinyWidgets::switchInput(ns("algbound"), 
                                       NULL, 
                                       value = FALSE,
                                       onLabel = "True",
@@ -224,10 +225,11 @@ LORDUI <- function(id) {
             id = ns("boundtoggle"),
             div(style="display: inline-block;vertical-align:top; width: 200px;",
                 tags$strong("Number of hypotheses"),
-                shiny::textInput(ns("boundnum"), 
+                shiny::textInput(ns("boundnum"),
                                  NULL,
-                                 width = 80,
-                                 value = 0))
+                                 value = 100,
+                                 placeholder = "No bound",
+                                 width = 80))
           )
         )
       ) #close div
@@ -327,7 +329,7 @@ SAFFRONUI <- function(id) {
         div(style="display: inline-block;vertical-align:top; width: 200px;",
             tags$strong(id = ns("label_bound"),
                         "Bound:"),
-            shinyWidgets::switchInput(ns("bound"), 
+            shinyWidgets::switchInput(ns("algbound"), 
                                       NULL, 
                                       value = FALSE,
                                       onLabel = "True",
@@ -344,10 +346,11 @@ SAFFRONUI <- function(id) {
             id = ns("boundtoggle"),
             div(style="display: inline-block;vertical-align:top; width: 200px;",
                 tags$strong("Number of hypotheses"),
-                shiny::textInput(ns("boundnum"), 
+                shiny::textInput(ns("boundnum"),
                                  NULL,
-                                 width = 80,
-                                 value = 0))
+                                 value = 100,
+                                 placeholder = "No bound",
+                                 width = 80))
           )
         )
       ) #close div
@@ -384,6 +387,26 @@ ADDISUI <- function(id) {
                        placement = "right",
                        trigger = "hover"),
     div(style="display: inline-block;vertical-align:top; width: 200px;",
+        tags$strong(id = ns("label_random"),
+                    "Random:"),
+        shinyWidgets::switchInput(ns("random"), 
+                                  NULL, 
+                                  value = TRUE,
+                                  onLabel = "True",
+                                  offLabel = "False", 
+                                  width = "80px")),
+    shinyBS::bsTooltip(ns("label_random"),
+                       "The order of p-values in each batch of experiments is randomized.",
+                       placement = "right",
+                       trigger = "hover"),
+    shiny::textInput(ns("seed"), 
+                     "Seed:",
+                     width = 80, value = 1),
+    shinyBS::bsTooltip(ns("seed"),
+                       "Remember your number as this will let you access the same results in the future.",
+                       placement = "right",
+                       trigger = "hover"),
+    div(style="display: inline-block;vertical-align:top; width: 200px;",
         strong(HTML(paste("Click for advanced options"))),
         prettyCheckbox(ns("checkbox"),
                        "Show me",
@@ -412,7 +435,7 @@ ADDISUI <- function(id) {
         div(style="display: inline-block;vertical-align:top; width: 200px;",
             tags$strong(id = ns("label_bound"),
                         "Bound:"),
-            shinyWidgets::switchInput(ns("bound"), 
+            shinyWidgets::switchInput(ns("algbound"), 
                                       NULL, 
                                       value = FALSE,
                                       onLabel = "True",
@@ -429,10 +452,11 @@ ADDISUI <- function(id) {
             id = ns("boundtoggle"),
             div(style="display: inline-block;vertical-align:top; width: 200px;",
                 tags$strong("Number of hypotheses"),
-                shiny::textInput(ns("boundnum"), 
+                shiny::textInput(ns("boundnum"),
                                  NULL,
-                                 width = 80,
-                                 value = 0))
+                                 value = 100,
+                                 placeholder = "No bound",
+                                 width = 80))
           )
         )
       ) # close div
@@ -507,7 +531,7 @@ alphainvestingUI <- function(id) {
         div(style="display: inline-block;vertical-align:top; width: 200px;",
             tags$strong(id = ns("label_bound"),
                         "Bound:"),
-            shinyWidgets::switchInput(ns("bound"), 
+            shinyWidgets::switchInput(ns("algbound"), 
                                       NULL, 
                                       value = FALSE,
                                       onLabel = "True",
@@ -524,10 +548,11 @@ alphainvestingUI <- function(id) {
             id = ns("boundtoggle"),
             div(style="display: inline-block;vertical-align:top; width: 200px;",
                 tags$strong("Number of hypotheses"),
-                shiny::textInput(ns("boundnum"), 
+                shiny::textInput(ns("boundnum"),
                                  NULL,
-                                 width = 80,
-                                 value = 0))
+                                 value = 100,
+                                 placeholder = "No bound",
+                                 width = 80))
           )
         )
       ) # close div
