@@ -243,7 +243,7 @@ LORDServer <- function(input, output, session, data) {
       req(input$b0)
       if(as.numeric(input$b0) <= 0 | as.numeric(input$b0) > 
          as.numeric(input$alpha) - 0.005 |
-         str_detect(input$alpha, "[a-zA-Z\\,\\-]+")) {
+         str_detect(input$b0, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "b0",
           text = "Value must be positive and 
@@ -327,7 +327,7 @@ LORDServer <- function(input, output, session, data) {
   #reset inputs
   observeEvent(input$reset, {
     updateTextInput(session, "alpha", value = 0.05)
-    updateSelectInput(session, "version", value = "++")
+    updateSelectInput(session, "version", selected = "++")
     updateTextInput(session, "b0", value = 0.045)
     updateSwitchInput(session, "random", value = TRUE)
     updateTextInput(session, "tau.discard", value = 0.5)
@@ -1733,8 +1733,8 @@ LONDplotServer <- function(input, output, session, LONDresult) {
     new_data <- LONDresult$LONDres() %>%
       mutate(index = row_number(),
              LOND = log(alphai),
-             Bonferroni = log(0.05/index),
-             Unadjusted = rep(log(0.05), nrow(.))) %>%
+             Bonferroni = log(LONDresult$alpha()/index),
+             Unadjusted = rep(log(LONDresult$alpha()), nrow(.))) %>%
       pivot_longer(cols = c(LOND, Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
@@ -1780,14 +1780,14 @@ LONDplotServer <- function(input, output, session, LONDresult) {
       ),
       p(
         renderTextillate({
-          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= LONDresult$alpha()/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
                          sync = T)
         })
       ),
       p(
         renderTextillate({
-          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= LONDresult$alpha()), " null hypotheses."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
                          sync = T)
         })
@@ -1805,8 +1805,8 @@ LORDplotServer <- function(input, output, session, LORDresult) {
     new_data <- LORDresult$LORDres() %>%
       mutate(index = row_number(),
              LORD = log(alphai),
-             Bonferroni = log(0.05/index),
-             Unadjusted = rep(log(0.05), nrow(.))) %>%
+             Bonferroni = log(LORDresult$alpha()/index),
+             Unadjusted = rep(log(LORDresult$alpha()), nrow(.))) %>%
       pivot_longer(cols = c(LORD, Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
@@ -1836,14 +1836,14 @@ LORDplotServer <- function(input, output, session, LORDresult) {
       ),
       p(
         renderTextillate({
-          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= LORDresult$alpha()/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
                          sync = T)
         })
       ),
       p(
         renderTextillate({
-          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= LORDresult$alpha()), " null hypotheses."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
                          sync = T)
         })
@@ -1863,8 +1863,8 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
     new_data <- SAFFRONresult$SAFFRONres() %>%
       mutate(index = row_number(),
              SAFFRON = log(alphai),
-             Bonferroni = log(0.05/index),
-             Unadjusted = rep(log(0.05), nrow(.))) %>%
+             Bonferroni = log(SAFFRONresult$alpha()/index),
+             Unadjusted = rep(log(SAFFRONresult$alpha()), nrow(.))) %>%
       pivot_longer(cols = c(SAFFRON, Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
@@ -1894,14 +1894,14 @@ SAFFRONplotServer <- function(input, output, session, SAFFRONresult) {
       ),
       p(
         renderTextillate({
-          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= SAFFRONresult$alpha()/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
                          sync = T)
         })
       ),
       p(
         renderTextillate({
-          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= SAFFRONresult$alpha()), " null hypotheses."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
                          sync = T)
         })
@@ -1951,8 +1951,8 @@ ADDISplotServer <- function(input, output, session, ADDISresult) {
     new_data <- ADDISresult$ADDISres() %>%
       mutate(index = row_number(),
              ADDIS = log(alphai),
-             Bonferroni = log(0.05/index),
-             Unadjusted = rep(log(0.05), nrow(.))) %>%
+             Bonferroni = log(ADDISresult$alpha()/index),
+             Unadjusted = rep(log(ADDISresult$alpha()), nrow(.))) %>%
       pivot_longer(cols = c(ADDIS, Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
@@ -1982,14 +1982,14 @@ ADDISplotServer <- function(input, output, session, ADDISresult) {
       ),
       p(
         renderTextillate({
-          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= ADDISresult$alpha()/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
                          sync = T)
         })
       ),
       p(
         renderTextillate({
-          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= ADDISresult$alpha()), " null hypotheses."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
                          sync = T)
         })
@@ -2039,8 +2039,8 @@ alphainvestingplotServer <- function(input, output, session, alphainvestingresul
     new_data <- alphainvestingresult$alphainvestingres() %>%
       mutate(index = row_number(),
              Alpha_investing = log(alphai),
-             Bonferroni = log(0.05/index),
-             Unadjusted = rep(log(0.05), nrow(.))) %>%
+             Bonferroni = log(alphainvestingresult$alpha()/index),
+             Unadjusted = rep(log(alphainvestingresult$alpha()), nrow(.))) %>%
       pivot_longer(cols = c(Alpha_investing, Bonferroni, Unadjusted),
                    names_to = "adjustment",
                    values_to = "alpha")
@@ -2070,14 +2070,14 @@ alphainvestingplotServer <- function(input, output, session, alphainvestingresul
       ),
       p(
         renderTextillate({
-          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= 0.05/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
+          textillate(paste0("Bonferroni rejected ", sum(current_alg_data$pval <= alphainvestingresult$alpha()/length(current_alg_data$pval)), " null hypotheses."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
                          sync = T)
         })
       ),
       p(
         renderTextillate({
-          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= 0.05), " null hypotheses."), auto.start = TRUE) %>%
+          textillate(paste0("No adjustment rejected ", sum(current_alg_data$pval <= alphainvestingresult$alpha()), " null hypotheses."), auto.start = TRUE) %>%
             textillateIn(effect = "fadeInDown",
                          sync = T)
         })
@@ -2117,8 +2117,8 @@ BatchPRDSplotServer <- function(input, output, session, BatchPRDSresult) {
     #modify data
     new_data <- BatchPRDSresult$BatchPRDSres() %>%
       group_by(batch) %>%
-      mutate(RBonf = pval <= (0.05/nrow(.)),
-             RUnadj = pval <= 0.05) %>%
+      mutate(RBonf = pval <= (BatchPRDSresult$alpha()/nrow(.)),
+             RUnadj = pval <= BatchPRDSresult$alpha()) %>%
       summarize(BatchPRDS = sum(R),
                 Bonferroni = sum(RBonf),
                 Unadjusted = sum(RUnadj)) %>%
@@ -2161,8 +2161,8 @@ BatchBHplotServer <- function(input, output, session, BatchBHresult) {
     #modify data
     new_data <- BatchBHresult$BatchBHres() %>%
       group_by(batch) %>%
-      mutate(RBonf = pval <= (0.05/nrow(.)),
-             RUnadj = pval <= 0.05) %>%
+      mutate(RBonf = pval <= (BatchBHresult$alpha()/nrow(.)),
+             RUnadj = pval <= BatchBHresult$alpha()) %>%
       summarize(BatchBH = sum(R),
                 Bonferroni = sum(RBonf),
                 Unadjusted = sum(RUnadj)) %>%
@@ -2205,8 +2205,8 @@ BatchStBHplotServer <- function(input, output, session, BatchStBHresult) {
     #modify data
     new_data <- BatchStBHresult$BatchStBHres() %>%
       group_by(batch) %>%
-      mutate(RBonf = pval <= (0.05/nrow(.)),
-             RUnadj = pval <= 0.05) %>%
+      mutate(RBonf = pval <= (BatchStBHresult$alpha()/nrow(.)),
+             RUnadj = pval <= BatchStBHresult$alpha()) %>%
       summarize(BatchStBH = sum(R),
                 Bonferroni = sum(RBonf),
                 Unadjusted = sum(RUnadj)) %>%
