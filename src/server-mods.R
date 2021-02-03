@@ -74,7 +74,7 @@ LONDServer <- function(input, output, session, data) {
       
       out <- NULL
     } else {
-      betai <- setBound("LOND", N = as.numeric(input$boundnum))
+      betai <- setBound("LOND", alpha = alpha, N = as.numeric(input$boundnum))
       out <- LOND(d = data(),
                   alpha = alpha,
                   betai = betai,
@@ -242,7 +242,7 @@ LORDServer <- function(input, output, session, data) {
     observeEvent(input$b0, {
       req(input$b0)
       if(as.numeric(input$b0) <= 0 | as.numeric(input$b0) > 
-         as.numeric(input$alpha) - 0.005 |
+         as.numeric(input$alpha) - 5e-10 |
          str_detect(input$b0, "[a-zA-Z\\,\\-]+")) {
         showFeedbackDanger(
           inputId = "b0",
@@ -299,8 +299,17 @@ LORDServer <- function(input, output, session, data) {
       shiny::showNotification(paste0("Please input a bound greater than or equal to the number of p-values in your data. The default dataset has 15 p-values."), type = "err", duration = NULL)
       
       out <- NULL
-    } else {
+    } else if(version != "dep") {
       gammai <- setBound("LORD", N = as.numeric(input$boundnum))
+      out <- LORD(d = data(),
+                  alpha = alpha,
+                  gammai = gammai,
+                  version = version,
+                  b0 = b0,
+                  tau.discard = tau.discard,
+                  random = input$random)
+    } else {
+      gammai <- setBound("LORDdep", alpha = alpha, N = as.numeric(input$boundnum), b0 = b0)
       out <- LORD(d = data(),
                   alpha = alpha,
                   gammai = gammai,
