@@ -309,7 +309,7 @@ LORDServer <- function(input, output, session, data) {
                   tau.discard = tau.discard,
                   random = input$random)
     } else {
-      gammai <- setBound("LORDdep", alpha = alpha, N = as.numeric(input$boundnum), b0 = b0)
+      gammai <- setBound("LORDdep", alpha = alpha, N = as.numeric(input$boundnum))
       out <- LORD(d = data(),
                   alpha = alpha,
                   gammai = gammai,
