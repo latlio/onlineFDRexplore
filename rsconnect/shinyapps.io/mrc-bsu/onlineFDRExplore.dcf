@@ -1,13 +1,13 @@
-name: onlineFDRexplore
-title: onlineFDRexplore
+name: onlineFDRExplore
+title: onlineFDRExplore
 username:
 account: mrc-bsu
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3366755
-bundleId: 4149797
+bundleId: 4181258
 url: https://mrc-bsu.shinyapps.io/onlineFDRExplore/
-when: 1611758598.75182
+when: 1612458560.49845
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: .Rprofile|DESCRIPTION

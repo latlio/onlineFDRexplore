@@ -78,11 +78,11 @@ LONDUI <- function(id) {
                                       onLabel = "True",
                                       offLabel = "False",
                                       width = "80px")),
-      
+        
         div(style="display: inline-block;vertical-align:top; width: 200px;",
             tags$strong(id = ns("label_bound"),
                         "Bound:"),
-            shinyWidgets::switchInput(ns("bound"), 
+            shinyWidgets::switchInput(ns("algbound"), 
                                       NULL, 
                                       value = FALSE,
                                       onLabel = "True",
@@ -93,19 +93,20 @@ LONDUI <- function(id) {
                                placement = "right",
                                trigger = "hover")
         ),
-      
+        
         shinyjs::hidden(
           div(
             id = ns("boundtoggle"),
             div(style="display: inline-block;vertical-align:top; width: 200px;",
                 tags$strong("Number of hypotheses"),
-                shiny::textInput(ns("boundnum"), 
+                shiny::textInput(ns("boundnum"),
                                  NULL,
-                                 width = 80,
-                                 value = 0))
+                                 value = 100,
+                                 placeholder = "No bound",
+                                 width = 80))
           )
         )
-    ) #close div
+      ) #close div
     ), #close hidden
     shinyWidgets::actionBttn(
       inputId = ns("go"),
@@ -207,7 +208,7 @@ LORDUI <- function(id) {
         div(style="display: inline-block;vertical-align:top; width: 200px;",
             tags$strong(id = ns("label_bound"),
                         "Bound:"),
-            shinyWidgets::switchInput(ns("bound"), 
+            shinyWidgets::switchInput(ns("algbound"), 
                                       NULL, 
                                       value = FALSE,
                                       onLabel = "True",
@@ -224,10 +225,11 @@ LORDUI <- function(id) {
             id = ns("boundtoggle"),
             div(style="display: inline-block;vertical-align:top; width: 200px;",
                 tags$strong("Number of hypotheses"),
-                shiny::textInput(ns("boundnum"), 
+                shiny::textInput(ns("boundnum"),
                                  NULL,
-                                 width = 80,
-                                 value = 0))
+                                 value = 100,
+                                 placeholder = "No bound",
+                                 width = 80))
           )
         )
       ) #close div
@@ -327,7 +329,7 @@ SAFFRONUI <- function(id) {
         div(style="display: inline-block;vertical-align:top; width: 200px;",
             tags$strong(id = ns("label_bound"),
                         "Bound:"),
-            shinyWidgets::switchInput(ns("bound"), 
+            shinyWidgets::switchInput(ns("algbound"), 
                                       NULL, 
                                       value = FALSE,
                                       onLabel = "True",
@@ -344,10 +346,11 @@ SAFFRONUI <- function(id) {
             id = ns("boundtoggle"),
             div(style="display: inline-block;vertical-align:top; width: 200px;",
                 tags$strong("Number of hypotheses"),
-                shiny::textInput(ns("boundnum"), 
+                shiny::textInput(ns("boundnum"),
                                  NULL,
-                                 width = 80,
-                                 value = 0))
+                                 value = 100,
+                                 placeholder = "No bound",
+                                 width = 80))
           )
         )
       ) #close div
@@ -381,6 +384,19 @@ ADDISUI <- function(id) {
                          width = 80, value = 0.05, placeholder = ".05")),
     shinyBS::bsTooltip(ns("alpha"), 
                        "Overall significance level of the FDR procedure",
+                       placement = "right",
+                       trigger = "hover"),
+    div(style="display: inline-block;vertical-align:top; width: 200px;",
+        tags$strong(id = ns("label_random"),
+                    "Random:"),
+        shinyWidgets::switchInput(ns("random"), 
+                                  NULL, 
+                                  value = TRUE,
+                                  onLabel = "True",
+                                  offLabel = "False", 
+                                  width = "80px")),
+    shinyBS::bsTooltip(ns("label_random"),
+                       "The order of p-values in each batch of experiments is randomized.",
                        placement = "right",
                        trigger = "hover"),
     shiny::textInput(ns("seed"), 
@@ -419,7 +435,7 @@ ADDISUI <- function(id) {
         div(style="display: inline-block;vertical-align:top; width: 200px;",
             tags$strong(id = ns("label_bound"),
                         "Bound:"),
-            shinyWidgets::switchInput(ns("bound"), 
+            shinyWidgets::switchInput(ns("algbound"), 
                                       NULL, 
                                       value = FALSE,
                                       onLabel = "True",
@@ -436,10 +452,11 @@ ADDISUI <- function(id) {
             id = ns("boundtoggle"),
             div(style="display: inline-block;vertical-align:top; width: 200px;",
                 tags$strong("Number of hypotheses"),
-                shiny::textInput(ns("boundnum"), 
+                shiny::textInput(ns("boundnum"),
                                  NULL,
-                                 width = 80,
-                                 value = 0))
+                                 value = 100,
+                                 placeholder = "No bound",
+                                 width = 80))
           )
         )
       ) # close div
@@ -514,7 +531,7 @@ alphainvestingUI <- function(id) {
         div(style="display: inline-block;vertical-align:top; width: 200px;",
             tags$strong(id = ns("label_bound"),
                         "Bound:"),
-            shinyWidgets::switchInput(ns("bound"), 
+            shinyWidgets::switchInput(ns("algbound"), 
                                       NULL, 
                                       value = FALSE,
                                       onLabel = "True",
@@ -531,10 +548,11 @@ alphainvestingUI <- function(id) {
             id = ns("boundtoggle"),
             div(style="display: inline-block;vertical-align:top; width: 200px;",
                 tags$strong("Number of hypotheses"),
-                shiny::textInput(ns("boundnum"), 
+                shiny::textInput(ns("boundnum"),
                                  NULL,
-                                 width = 80,
-                                 value = 0))
+                                 value = 100,
+                                 placeholder = "No bound",
+                                 width = 80))
           )
         )
       ) # close div
@@ -616,7 +634,7 @@ compareUI <- function(id) {
   
   tagList(
     br(),
-    p("Make sure you already clicked Calculate. Clicking the 'Compare' button compares the results of two algorithms. Parameters for the selected algorithm are assumed to be same as those for the current algorithm, otherwise they are set to the default values (see Help)."),
+    p("To use this feature, first click 'Reset Inputs'. Make sure you have already clicked 'Calculate'. This feature compares the results of two algorithms at their default settings. Changing any inputs will result in an unfair and nonsensical comparison. Note that for datasets with more than 50,000 p-values, expect a runtime between 30 seconds and 1 minute."),
     column(width = 12,
            align = "center",
            div(style = "display: inline-block;vertical-align:top;text-align:center",
@@ -642,7 +660,7 @@ batchcompareUI <- function(id) {
   
   tagList(
     br(),
-    p("Make sure you already clicked Calculate. Clicking the 'Compare' button compares the results of two algorithms. Parameters for the selected algorithm are assumed to be same as those for the current algorithm, otherwise they are set to the default values (see Help)."),
+    p("To use this feature, first click 'Reset Inputs'. Make sure you have already clicked 'Calculate'. This feature compares the results of two algorithms at their default alpha setting. Note that for datasets with more than 50,000 p-values, expect a runtime between 30 seconds and 1 minute."),
     column(width = 12,
            align = "center",
            div(style = "display: inline-block;vertical-align:top;text-align:center",
@@ -693,19 +711,19 @@ plot2UI <- function(id) {
 }
 
 batchplotUI <- function(id) {
-    ns <- NS(id)
-    
-    tagList(
-      plotlyOutput(ns("bplot1")) %>%
-        shinycssloaders::withSpinner(type = 6,
-                                     color = "#0066CC"),
-      br(),     
-      plotlyOutput(ns("bplot2")) %>%
-        shinycssloaders::withSpinner(type = 6,
-                                     color = "#0066CC"),
-      br(),
-      uiOutput(ns("bnum"))
-    )
+  ns <- NS(id)
+  
+  tagList(
+    plotlyOutput(ns("bplot1")) %>%
+      shinycssloaders::withSpinner(type = 6,
+                                   color = "#0066CC"),
+    br(),     
+    plotlyOutput(ns("bplot2")) %>%
+      shinycssloaders::withSpinner(type = 6,
+                                   color = "#0066CC"),
+    br(),
+    uiOutput(ns("bnum"))
+  )
 }
 
 set_html_breaks <- function(n) {
