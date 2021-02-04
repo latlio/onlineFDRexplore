@@ -962,6 +962,11 @@ BatchPRDSServer <- function(input, output, session, data) {
     }
   })
   
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+  })
+  
   list(BatchPRDSres = BatchPRDSres,
        BatchPRDSparams = BatchPRDSparams,
        alpha = reactive(as.numeric(input$alpha)))
@@ -1044,6 +1049,11 @@ BatchBHServer <- function(input, output, session, data) {
     }
   })
   
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
+  })
+  
   list(BatchBHres = BatchBHres,
        BatchBHparams = BatchBHparams,
        alpha = reactive(as.numeric(input$alpha)))
@@ -1123,6 +1133,11 @@ BatchStBHServer <- function(input, output, session, data) {
         shiny::showNotification(paste0(err), type = "err", duration = NULL)
       })
     }
+  })
+  
+  #reset inputs
+  observeEvent(input$reset, {
+    updateTextInput(session, "alpha", value = 0.05)
   })
   
   list(BatchStBHres = BatchStBHres,
