@@ -125,8 +125,8 @@
       "Package": "bslib",
       "Version": "0.2.3.9000",
       "Source": "GitHub",
-      "Remotes": "rstudio/shiny, rstudio/rmarkdown",
       "RemoteType": "github",
+      "Remotes": "rstudio/shiny, rstudio/rmarkdown",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "bslib",
       "RemoteUsername": "rstudio",
@@ -760,16 +760,10 @@
     },
     "shiny": {
       "Package": "shiny",
-      "Version": "1.5.0.9007",
-      "Source": "GitHub",
-      "Remotes": "rstudio/htmltools, rstudio/sass, rstudio/bslib,\nrstudio/shinytest, r-lib/cachem",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "shiny",
-      "RemoteUsername": "rstudio",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "036f923e05b7da06a107cf5943edb40fcb377c79",
-      "Hash": "8a77c4536ac9edbebcdf74c154f5deb1"
+      "Version": "1.6.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "6e3b6ae7fe02b5859e4bb277f218b8ae"
     },
     "shinyBS": {
       "Package": "shinyBS",
