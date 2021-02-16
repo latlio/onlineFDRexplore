@@ -12,7 +12,7 @@ fluidPage(
              subtitle = "Research Assistant @ MRC BSU",
              type = NULL,
              width = 12,
-             src = "https://i.ibb.co/ZV9JFKw/1q-cropped.jpg",
+             src = "https://i.ibb.co/VppdDGd/1q-cropped.jpg",
              background = TRUE,
              backgroundUrl = "https://images.pexels.com/photos/531880/pexels-photo-531880.jpeg?auto=compress&cs=tinysrgb&h=350",
              closable = FALSE,
